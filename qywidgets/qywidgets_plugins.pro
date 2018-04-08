@@ -1,8 +1,5 @@
 # to make plugin for designer
 
-# dir: /usr/lib64/qt5/plugins
-# sudo cp /home/collection/sw/NetBeansProjects/qywidgets_build/release/libqywidgets_plugin.so /usr/lib64/qt5/plugins/designer/
-
 
 QT  += widgets uiplugin designer
 CONFIG  += plugin
@@ -25,9 +22,3 @@ HEADERS += \
 # CONFIG += debug
 # CONFIG += release
 
-# https://www.ics.com/blog/integrating-custom-widget-qt-designer
-# https://github.com/set-soft/led-designer-plugin
-# https://github.com/creedr/QtPropertyBrowser/tree/master/plugin
-# http://doc.qt.io/qt-5/designer-creating-custom-widgets.html
-# https://github.com/mbasaglia/Qt-Color-Widgets/tree/master/color_widgets_designer_plugin
-#
