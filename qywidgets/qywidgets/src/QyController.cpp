@@ -21,87 +21,7 @@
 #include "QyStyleOption.h"
 #include <QToolTip>
 
-
-
-
-//bool QSliderPrivate::updateHoverControl(const QPoint &pos)
-//{
-//    Q_Q(QSlider);
-//    QRect lastHoverRect = hoverRect;
-//    QStyle::SubControl lastHoverControl = hoverControl;
-//    bool doesHover = q->testAttribute(Qt::WA_Hover);
-//    if (lastHoverControl != newHoverControl(pos) && doesHover) {
-//        q->update(lastHoverRect);
-//        q->update(hoverRect);
-//        return true;
-//    }
-//    return !doesHover;
-//}
-
-//QStyle::SubControl QSliderPrivate::newHoverControl(const QPoint &pos)
-//{
-//    Q_Q(QSlider);
-//    QStyleOptionSlider opt;
-//    q->initStyleOption(&opt);
-//    opt.subControls = QStyle::SC_All;
-//    QRect handleRect = q->style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, q);
-//    QRect grooveRect = q->style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, q);
-//    QRect tickmarksRect = q->style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderTickmarks, q);
-
-//    if (handleRect.contains(pos)) {
-//        hoverRect = handleRect;
-//        hoverControl = QStyle::SC_SliderHandle;
-//    } else if (grooveRect.contains(pos)) {
-//        hoverRect = grooveRect;
-//        hoverControl = QStyle::SC_SliderGroove;
-//    } else if (tickmarksRect.contains(pos)) {
-//        hoverRect = tickmarksRect;
-//        hoverControl = QStyle::SC_SliderTickmarks;
-//    } else {
-//        hoverRect = QRect();
-//        hoverControl = QStyle::SC_None;
-//    }
-
-//    return hoverControl;
-//}
-//bool QSlider::event(QEvent *event)
-//{
-//    Q_D(QSlider);
-
-//    switch(event->type()) {
-//    case QEvent::HoverEnter:
-//    case QEvent::HoverLeave:
-//    case QEvent::HoverMove:
-//        if (const QHoverEvent *he = static_cast<const QHoverEvent *>(event))
-//            d->updateHoverControl(he->pos());
-//        break;
-//    case QEvent::StyleChange:
-//    case QEvent::MacSizeChange:
-//        d->resetLayoutItemMargins();
-//        break;
-//    default:
-//        break;
-//    }
-//    return QAbstractSlider::event(event);
-//}
-
-// https://stackoverflow.com/questions/7276330/qt-stylesheet-for-custom-widget?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-
-
-// void CustomWidget::paintEvent(QPaintEvent *)
-// {
-//     QStyleOption opt;
-//     opt.init(this);
-//     QPainter p(this);
-//     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-// }
-
-
-
 QT_BEGIN_NAMESPACE
-
-// https://locklessinc.com/articles/sat_arithmetic/
-// http://wiki.qt.io/D-Pointer
 
 void drawQyMinimalStyle( const QyStyleOption *option, QPainter *p );
 
@@ -121,8 +41,6 @@ void QyController::initStyleOption( QyStyleOption *option) const
     option->initFrom(this);
     option->valueDisplay = &(d->valueVector);
     option->styleData = &(d->styleData);
-//    option->subControls = QStyle::SC_All; // obsolete
-//    option->activeSubControls = QStyle::SC_None; // obsolete
 }
 
 QyController::QyController(QWidget *parent)
@@ -149,11 +67,6 @@ void QyController::resizeEvent(QResizeEvent *e)
 void QyController::paintEvent(QPaintEvent * e)
 {
     QPainter p(this);
-
-//     QStyleOption opt;
-//     opt.init(this);
-//     style()->drawPrimitive(QStyle::PE_Frame, &opt, &p, this);
-
     QyStyleOption option;
     initStyleOption(&option);
     drawQyMinimalStyle(&option, &p);
@@ -288,6 +201,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
             break;
         case Qt::Key_End:
             // define a flag to enable
+            // no  for symmetric
             break;
         default:
             ev->ignore();
@@ -317,6 +231,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
             d->controllerTransformer.reset();
             break;
         case Qt::Key_End:
+            // no  for symmetric
             // define a flag to enable
             break;
         default:

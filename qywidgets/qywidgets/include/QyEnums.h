@@ -37,18 +37,15 @@ public:
         GS_RoundLed,
         GS_SquareLed,
 
-        // controller+value together or 2 values - vv.size must be 2
-        // controller   = vv[0]
-        // display      = vv[1]
 
-        GS_TwinSlider   = 0x10,
-        GS_TwinHalfGauge,
-        GS_ConcentricGauge,
-        GS_ConcentricHalfGauge,
+//        GS_TwinSlider   = 0x10,
+//        GS_TwinHalfGauge,
+//        GS_ConcentricGauge,
+//        GS_ConcentricHalfGauge,
 
-        GS_GaugeLed     = 0x20,
-        GS_HalfGaugeLed,
-        GS_SliderLed,
+//        GS_GaugeLed     = 0x20,
+//        GS_HalfGaugeLed,
+//        GS_SliderLed,
 
         GS_MAX
     };
@@ -74,6 +71,10 @@ public:
     };
 
     Q_ENUM(ColorStyle);
+
+    // controller+value together or 2 values - vv.size must be 2
+    // controller   = vv[0]
+    // display      = vv[1]
 
     enum SubIndicatorStyle : uint8_t  {
         SIS_Auto,       // TwinSlider, ConcentricGauge, ConcentricHalfGauge

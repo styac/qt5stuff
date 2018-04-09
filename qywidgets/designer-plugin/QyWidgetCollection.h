@@ -18,30 +18,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyStyleData.h"
-#include "QyValueTransfomer.h"
-#include <private/qwidget_p.h>
-#include <private/qframe_p.h>
+#include "QyController_plugin.h"
+#include "QyIndicator_plugin.h"
 
-QT_BEGIN_NAMESPACE
+#include <QtDesigner/QtDesigner>
+#include <QtCore/qplugin.h>
 
-
-class QyAbstractIndicatorPrivate : public QFramePrivate
+class QyWidgetsCollection: public QObject, public QDesignerCustomWidgetCollectionInterface
 {
-    Q_DECLARE_PUBLIC(QyAbstractIndicator)
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
+    Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
 
 public:
-    QyAbstractIndicatorPrivate( bool res0 = false );
-    ~QyAbstractIndicatorPrivate();
+    QyWidgetsCollection(QObject *parent = 0);
 
-    void recalculateStyleData( const QyAbstractIndicator * thp );
-    QyBase::ValueVector     valueVector;
-    QyBase::ValueTransfomer indicatorTransformer;
-    QColor leftColor;
-    QColor rightColor;
-    QColor remoteControlledColor;
-    StyleData styleData;
+    QList<QDesignerCustomWidgetInterface*> customWidgets() const Q_DECL_OVERRIDE;
+
+private:
+    QList<QDesignerCustomWidgetInterface*> widgets;
 };
-
-QT_END_NAMESPACE
-

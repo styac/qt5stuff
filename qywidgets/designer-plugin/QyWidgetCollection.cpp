@@ -1,5 +1,3 @@
-#pragma once
-
 /*
  * Copyright (C) 2018 Istvan Simon -- stevens37 at gmail dot com
  *
@@ -18,30 +16,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyStyleData.h"
-#include "QyValueTransfomer.h"
-#include <private/qwidget_p.h>
-#include <private/qframe_p.h>
+#include    "QyWidgetCollection.h"
 
-QT_BEGIN_NAMESPACE
-
-
-class QyAbstractIndicatorPrivate : public QFramePrivate
+QyWidgetsCollection::QyWidgetsCollection(QObject *parent)
+        : QObject(parent)
 {
-    Q_DECLARE_PUBLIC(QyAbstractIndicator)
+    widgets.append(new QyIndicator_plugin(this));
+    widgets.append(new QyController_plugin(this));
+}
 
-public:
-    QyAbstractIndicatorPrivate( bool res0 = false );
-    ~QyAbstractIndicatorPrivate();
-
-    void recalculateStyleData( const QyAbstractIndicator * thp );
-    QyBase::ValueVector     valueVector;
-    QyBase::ValueTransfomer indicatorTransformer;
-    QColor leftColor;
-    QColor rightColor;
-    QColor remoteControlledColor;
-    StyleData styleData;
-};
-
-QT_END_NAMESPACE
-
+QList<QDesignerCustomWidgetInterface*> QyWidgetsCollection::customWidgets() const
+{
+    return widgets;
+}

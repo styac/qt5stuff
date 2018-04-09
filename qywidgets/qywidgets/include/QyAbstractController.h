@@ -31,11 +31,12 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     // maybe to Indicator
     // Q_PROPERTY(bool showTooltip
     // Q_PROPERTY(bool showStatus in statusbar : enter or clicked?
+    //    Q_PROPERTY( Qt::QColor remoteControlledColor READ remoteControlledColor WRITE setRemoteControlledColor )
 
     Q_PROPERTY(bool symmetric READ symmetric WRITE setSymmetric)
     Q_PROPERTY(bool emitSliderValue READ emitSliderValue WRITE setEmitSliderValue)
     Q_PROPERTY(bool invertSliderValue READ invertSliderValue WRITE setInvertSliderValue)
-    //Q_PROPERTY(bool remoteControlled READ remoteControlled WRITE setRemoteControlled)
+    Q_PROPERTY(bool remoteControlled READ remoteControlled WRITE setRemoteControlled)
     Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
     Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
@@ -68,6 +69,7 @@ public:
     bool controllerIndicator() const;
     bool emitSliderValue() const;
     bool invertSliderValue() const;
+    bool remoteControlled() const;
     double minimum() const;
     double maximum() const;
     double value() const;
@@ -84,6 +86,7 @@ public Q_SLOTS:
     void setRange(double min, double max);
     void setEmitSliderValue(bool);
     void setInvertSliderValue(bool);
+    void setRemoteControlled(bool);
 
 Q_SIGNALS:
     void sliderPositionChanged(int value);

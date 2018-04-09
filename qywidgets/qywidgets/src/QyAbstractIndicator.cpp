@@ -33,8 +33,8 @@ QT_BEGIN_NAMESPACE
 QyAbstractIndicatorPrivate::QyAbstractIndicatorPrivate( bool res0 )
     : valueVector()
     , indicatorTransformer( valueVector, res0 )
-    , leftColor(0,255,255,255)
-    , rightColor(255,128,128,255)
+    , leftColor(0,255,210,255)
+    , rightColor(0,210,255,255)
 {
 }
 
@@ -97,25 +97,25 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
 
         }
         break;
-    case Qy::GS_TwinSlider:
-        {
+//    case Qy::GS_TwinSlider:
+//        {
 
-        }
-        break;
-    case Qy::GS_TwinHalfGauge:
-        {
+//        }
+//        break;
+//    case Qy::GS_TwinHalfGauge:
+//        {
 
-        }
-        break;
-    case Qy::GS_ConcentricGauge:
-        {
+//        }
+//        break;
+//    case Qy::GS_ConcentricGauge:
+//        {
 
-        }
-        break;
-    case Qy::GS_ConcentricHalfGauge:
-        {
+//        }
+//        break;
+//    case Qy::GS_ConcentricHalfGauge:
+//        {
 
-        }
+//        }
         break;
     default:
         return;

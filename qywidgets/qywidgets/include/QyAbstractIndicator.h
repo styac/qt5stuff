@@ -52,7 +52,7 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
 
 //    Q_PROPERTY(QColor textColor READ textColor WRITE setValueColor)
 //    Q_PROPERTY( Qt::QColor rightColor READ rightColor WRITE setRightColor )
-//    Q_PROPERTY( Qt::QColor lettColor READ lettColor WRITE setLeftColor )
+//    Q_PROPERTY( Qt::QColor leftColor READ lettColor WRITE setLeftColor )
 
 public:
     ~QyAbstractIndicator();

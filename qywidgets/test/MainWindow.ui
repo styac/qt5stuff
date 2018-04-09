@@ -43,9 +43,6 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QDial" name="dial_3"/>
-     </item>
-     <item>
       <widget class="QyController" name="dial_test_little"/>
      </item>
     </layout>
@@ -53,8 +50,8 @@
    <widget class="QWidget" name="widget1" native="true">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>240</y>
+      <x>330</x>
+      <y>0</y>
       <width>400</width>
       <height>300</height>
      </rect>
@@ -65,22 +62,54 @@
       <height>300</height>
      </size>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QyController" name="dial_test_big">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>200</height>
-        </size>
-       </property>
-       <property name="sizeIncrement">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-      </widget>
+    <layout class="QGridLayout" name="gridLayout"/>
+   </widget>
+   <widget class="QyController" name="dial_test_big">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>10</y>
+      <width>382</width>
+      <height>282</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>200</width>
+      <height>200</height>
+     </size>
+    </property>
+    <property name="sizeIncrement">
+     <size>
+      <width>10</width>
+      <height>10</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>400</y>
+      <width>526</width>
+      <height>102</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QyController" name="controller_mid_1"/>
+     </item>
+     <item>
+      <widget class="QyController" name="controller_mid_2"/>
+     </item>
+     <item>
+      <widget class="QyController" name="controller_mid_3"/>
+     </item>
+     <item>
+      <widget class="QyController" name="controller_mid_4"/>
+     </item>
+     <item>
+      <widget class="QyController" name="controller_mid_5"/>
      </item>
     </layout>
    </widget>

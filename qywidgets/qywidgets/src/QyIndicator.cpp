@@ -20,10 +20,7 @@
 #include "QyAbstractIndicator_p.h"
 #include "QyStyleOption.h"
 
-
 QT_BEGIN_NAMESPACE
-
-// https://locklessinc.com/articles/sat_arithmetic/
 
 void drawQyMinimalStyle( const QyStyleOption *option, QPainter *p );
 
@@ -42,8 +39,6 @@ void QyIndicator::initStyleOption( QyStyleOption *option) const
     Q_D(const QyIndicator);
     option->initFrom(this);
     option->valueDisplay = &(d->valueVector);
-//    option->subControls = QStyle::SC_All; // obsolete
-//    option->activeSubControls = QStyle::SC_None; // obsolete
 }
 
 QyIndicator::QyIndicator(QWidget *parent)
@@ -73,13 +68,6 @@ void QyIndicator::paintEvent(QPaintEvent * e)
     qDebug() << " ** paintEvent: " << e ;
 }
 
-//void QyIndicator::mouseDoubleClickEvent(QMouseEvent * e)
-//{
-//    Q_D(QyIndicator);
-//    d->indicatorTransformer.reset();
-////    update();
-//}
-
 // does nothing
 void QyIndicator::mousePressEvent(QMouseEvent * e)
 {
@@ -97,26 +85,6 @@ void QyIndicator::mouseReleaseEvent(QMouseEvent * e)
     }
     e->accept();
 }
-
-
-//void QyIndicator::mouseMoveEvent(QMouseEvent * e)
-//{
-//    Q_D(QyIndicator);
-//    if (!(e->buttons() & Qt::LeftButton)) {
-//        e->ignore();
-//        return;
-//    }
-//    e->accept();
-//}
-
-
-//void QyIndicator::wheelEvent(QWheelEvent *e)
-//{
-//    Q_D(QyIndicator);
-//    qDebug() << "  QWheelEvent " << e->delta() << " delta " << e->angleDelta() << " globalPos " << e->globalPos() << " phase " << e->phase();
-//    e->accept();
-//}
-
 
 QSize QyIndicator::minimumSizeHint() const
 {

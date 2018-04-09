@@ -18,14 +18,13 @@
  */
 
 #include <QObject>
-// #include <QDesignerCustomWidgetInterface>
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 
 class QyController_plugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetInterface)
-    Q_PLUGIN_METADATA(IID "com.ics.Qt.CustomWidgets")
+//    Q_PLUGIN_METADATA(IID "org.Qy.Qt.QyControllerInterface")
 
 public:
     explicit QyController_plugin(QObject *parent = nullptr);
@@ -49,4 +48,6 @@ public:
 private:
     bool initialized;
 };
+
+
 

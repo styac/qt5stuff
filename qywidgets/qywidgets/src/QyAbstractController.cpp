@@ -80,13 +80,6 @@ void QyAbstractControllerPrivate::setSteps(int single, int page)
     valueHandler.setSingleStep(single);
 }
 
-
-//QyAbstractController::QyAbstractController(QWidget *parent)
-//    : QyAbstractIndicator(*new QyAbstractIndicatorPrivate, parent)
-//{
-//    qDebug() << "--ctor--  QyAbstractIndicator-new";
-//}
-
 QyAbstractController::QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent)
     : QyAbstractIndicator(dd, parent)
 {
@@ -200,6 +193,22 @@ void QyAbstractController::setControllerIndicator(bool val)
     }
 }
 
+void QyAbstractController::setRemoteControlled(bool val)
+{
+    Q_D(QyAbstractController);
+    if( d->remoteControlled != val ) {
+        d->remoteControlled = val;
+        // TODO set color  remoteControlledColor
+        update();
+    }
+}
+
+bool QyAbstractController::remoteControlled() const
+{
+    Q_D(const QyAbstractController);
+    return d->remoteControlled;
+}
+
 bool QyAbstractController::symmetric() const
 {
     Q_D(const QyAbstractController);
@@ -230,14 +239,6 @@ void QyAbstractController::setValue(double value)
         }
     }
 }
-
-//void QyAbstractController::wheelEvent(QWheelEvent * e)
-//{
-//    Q_D(QyAbstractController);
-//    e->ignore();
-//    int delta = e->delta();
-//    // TODO something
-//}
 
 int QyAbstractController::sliderMaximum() const
 {
@@ -304,90 +305,6 @@ void QyAbstractController::setInvertSliderValue(bool val)
     }
 }
 
-
-// why is  keyPressEvent here ? and mouse in QyController
-
-//void QyAbstractController::keyPressEvent(QKeyEvent *ev)
-//{
-//    Q_D(QyAbstractController);
-//    int32_t stepValue = 0;
-//    if( ev->modifiers() & Qt::ShiftModifier ) {
-//        switch (ev->key()) {
-//        case Qt::Key_Down:
-//            stepValue = - d->valueHandler.getStepValue(QyBase::STEPS::STEP_SINGLE_PLUS);
-//            break;
-//        case Qt::Key_Left:
-//            stepValue = - d->valueHandler.getStepValue(QyBase::STEPS::STEP_TINY_PLUS);
-//            break;
-//        case Qt::Key_Up:
-//            stepValue = d->valueHandler.getStepValue(QyBase::STEPS::STEP_SINGLE_PLUS);
-//            break;
-//        case Qt::Key_Right:
-//            stepValue = d->valueHandler.getStepValue(QyBase::STEPS::STEP_TINY_PLUS);
-//            break;
-//        case Qt::Key_PageUp:
-//            d->controllerTransformer.stepGiant( d->valueHandler.getStepValue(QyBase::STEPS::STEP_PAGE));
-//            break;
-//        case Qt::Key_PageDown:
-//            d->controllerTransformer.stepGiant( -d->valueHandler.getStepValue(QyBase::STEPS::STEP_PAGE));
-//            break;
-//        case Qt::Key_Home:
-//            d->controllerTransformer.reset();
-//            break;
-//        case Qt::Key_End:
-//            break;
-//        default:
-//            ev->ignore();
-//            return;
-//        }
-//    } else {
-//        switch (ev->key()) {
-//        case Qt::Key_Down:
-//            stepValue = - d->valueHandler.getStepValue(QyBase::STEPS::STEP_SINGLE);
-//            break;
-//        case Qt::Key_Left:
-//            stepValue = - d->valueHandler.getStepValue(QyBase::STEPS::STEP_TINY);
-//            break;
-//        case Qt::Key_Up:
-//            stepValue = d->valueHandler.getStepValue(QyBase::STEPS::STEP_SINGLE);
-//            break;
-//        case Qt::Key_Right:
-//            stepValue = d->valueHandler.getStepValue(QyBase::STEPS::STEP_TINY);
-//            break;
-//        case Qt::Key_PageUp:
-//            stepValue = d->valueHandler.getStepValue(QyBase::STEPS::STEP_PAGE);
-//            break;
-//        case Qt::Key_PageDown:
-//            stepValue = - d->valueHandler.getStepValue(QyBase::STEPS::STEP_PAGE);
-//            break;
-//        case Qt::Key_Home:
-//            d->controllerTransformer.reset();
-//            break;
-//        case Qt::Key_End:
-//            break;
-//        default:
-//            ev->ignore();
-//            return;
-//        }
-//    }
-//    if( stepValue ) {
-//        if( ! d->controllerTransformer.addSliderValue( stepValue, 0 ) ) {
-//            return;
-//        }
-//    }
-//    update();
-//    emit valueChanged( d->controllerTransformer.getValue(0) );
-//    if( d->emitSliderValue ) {
-//        const auto sliderValue = d->controllerTransformer.getSliderValue(0);
-//        emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
-//    }
-//}
-
-// not needed here
-//bool QyAbstractController::event(QEvent *e)
-//{
-//    return QWidget::event(e);
-//}
 
 void QyAbstractController::initTransformParameters( double p0, double p1 )
 {
