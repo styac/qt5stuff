@@ -76,9 +76,13 @@ void QyController::paintEvent(QPaintEvent * e)
 void QyController::mouseDoubleClickEvent(QMouseEvent * e)
 {
     Q_D(QyController);
+    if( d->remoteControlled ) {
+        return;
+    }
+
     d->controllerTransformer.reset();
     update();
-    emit valueChanged( d->controllerTransformer.getValue(0));
+    emit valueChanged( d->controllerTransformer.getValue(0), d->valueId);
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
         emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
@@ -94,6 +98,10 @@ void QyController::mousePressEvent(QMouseEvent * e)
         auto kMods = QGuiApplication::keyboardModifiers();
         int keyModsInt = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
         emit userEvent( d->userEventValue, keyModsInt );
+        return;
+    }
+
+    if( d->remoteControlled ) {
         return;
     }
 
@@ -118,6 +126,10 @@ void QyController::mouseReleaseEvent(QMouseEvent * e)
 void QyController::mouseMoveEvent(QMouseEvent * e)
 {
     Q_D(QyController);
+    if( d->remoteControlled ) {
+        return;
+    }
+
     if (!(e->buttons() & Qt::LeftButton)) {
         e->ignore();
         return;
@@ -129,7 +141,7 @@ void QyController::mouseMoveEvent(QMouseEvent * e)
         d->lastPosition = - e->localPos().y();
     } else if( d->valueFromPoint( - e->localPos().y() ) ) {
         update();
-        emit valueChanged( d->controllerTransformer.getValue(0));
+        emit valueChanged( d->controllerTransformer.getValue(0), d->valueId);
         if( d->emitSliderValue ) {
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
             emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
@@ -175,6 +187,10 @@ void QyController::leaveEvent(QEvent *e)
 void QyController::keyPressEvent(QKeyEvent *ev)
 {
     Q_D(QyAbstractController);
+    // TODO handle userEvent key
+    if( d->remoteControlled ) {
+        return;
+    }
     int32_t stepValue = 0;
     if( ev->modifiers() & Qt::ShiftModifier ) {
         switch (ev->key()) {
@@ -245,7 +261,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
         }
     }
     update();
-    emit valueChanged( d->controllerTransformer.getValue(0) );
+    emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
         emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );

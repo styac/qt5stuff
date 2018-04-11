@@ -49,6 +49,7 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
     Q_PROPERTY( Qy::GraphicStyle graphicStyle READ graphicStyle WRITE setGraphicStyle)
     Q_PROPERTY( Qy::TextBoxPlacement textBoxPlacement READ textBoxPlacement WRITE setTextBoxPlacement)
     Q_PROPERTY( Qy::ColorStyle colorStyle READ colorStyle WRITE setColorStyle)
+    Q_PROPERTY( QString title READ title WRITE setTitle)
 
 //    Q_PROPERTY(QColor textColor READ textColor WRITE setValueColor)
 //    Q_PROPERTY( Qt::QColor rightColor READ rightColor WRITE setRightColor )
@@ -64,6 +65,7 @@ public:
             QyBase::TransfomerParameters::FpValue2slider value2slider,
             QyBase::TransfomerParameters::FpSetMinMax setValueRange );
 
+    void setTitle(QString const&);
     void setMinimum(double);
     void setMaximum(double);
     void setSymmetric(bool);
@@ -76,6 +78,7 @@ public:
     // to QyIndicator
     void setSequenceOrientation(Qt::Orientation);
 
+    QString const& title() const;
     bool symmetric() const;
     bool mirrored() const;
     bool invertedFlow() const;

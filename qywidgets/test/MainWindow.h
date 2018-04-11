@@ -27,8 +27,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
 
 public slots:
-    void changedValueMiddle(double val);
-    void changedValueBig(double val);
+    void changedValueMiddle(double val, int valueId);
+    void changedValueBig(double val, int valueId);
     void handleUserEvent(int val, int kmods);
 
 private:

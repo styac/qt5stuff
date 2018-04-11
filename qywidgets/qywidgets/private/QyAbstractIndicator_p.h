@@ -35,6 +35,7 @@ public:
     ~QyAbstractIndicatorPrivate();
 
     void recalculateStyleData( const QyAbstractIndicator * thp );
+    QString title;
     QyBase::ValueVector     valueVector;
     QyBase::ValueTransfomer indicatorTransformer;
     QColor leftColor;

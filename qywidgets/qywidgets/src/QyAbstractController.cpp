@@ -34,6 +34,7 @@ QyAbstractControllerPrivate::QyAbstractControllerPrivate()
     , controllerTransformer( valueVector, true ) // vv[0] reserved
     , lastPosition(0)
     , userEventValue(0)
+    , remoteControlledColorAlpha(128)
     , flags(0)
 {
     qDebug() << "--ctor--  QyAbstractControllerPrivate";
@@ -97,7 +98,7 @@ void QyAbstractController::setRange(double min, double max)
     if( d->controllerTransformer.setRange(min, max) ) {
         emit rangeChanged(d->controllerTransformer.getMinimum(), d->controllerTransformer.getMaximum());
         if( d->controllerTransformer.recalculate(0) ) {
-            emit valueChanged( d->controllerTransformer.getValue(0) );
+            emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
             update();
         }
     }
@@ -199,6 +200,13 @@ void QyAbstractController::setRemoteControlled(bool val)
     if( d->remoteControlled != val ) {
         d->remoteControlled = val;
         // TODO set color  remoteControlledColor
+        if( val ) {
+            d->styleData.leftColor.setAlpha(d->remoteControlledColorAlpha);
+            d->styleData.rightColor.setAlpha(d->remoteControlledColorAlpha);
+        } else {
+            d->styleData.leftColor.setAlpha(255);
+            d->styleData.rightColor.setAlpha(255);
+        }
         update();
     }
 }
@@ -232,7 +240,7 @@ void QyAbstractController::setValue(double value)
     Q_D(QyAbstractController);
     if( d->controllerTransformer.setValue( value, 0 )) {
         update();
-        emit valueChanged( value );
+        emit valueChanged( value, d->valueId );
         if( d->emitSliderValue ) {
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
             emit sliderPositionChanged( sliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
@@ -264,6 +272,7 @@ void QyAbstractController::setSliderPosition(int val)
             const auto invert = d->invertSliderValue;
             emit sliderPositionChanged( invert ? QyBase::maximumSlider - val : val );
         }
+        emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
         update();
     }
 }
@@ -278,6 +287,18 @@ bool QyAbstractController::invertSliderValue() const
 {
     Q_D( const QyAbstractController);
     return d->invertSliderValue;
+}
+
+int QyAbstractController::valueId() const
+{
+    Q_D( const QyAbstractController);
+    return d->valueId;
+}
+
+void QyAbstractController::setValueId(int val)
+{
+    Q_D(QyAbstractController);
+    d->valueId = val;
 }
 
 void QyAbstractController::setEmitSliderValue(bool val)

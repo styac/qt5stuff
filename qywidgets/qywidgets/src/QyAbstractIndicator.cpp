@@ -156,6 +156,20 @@ QyAbstractIndicator::~QyAbstractIndicator()
 {
 }
 
+
+QString const& QyAbstractIndicator::title() const
+{
+    Q_D(const QyAbstractIndicator);
+    return d->title;
+}
+
+
+void QyAbstractIndicator::setTitle(QString const& val)
+{
+    Q_D(QyAbstractIndicator);
+    d->title = val;
+}
+
 // TODO
 void QyAbstractIndicator::setRange(double min, double max)
 {

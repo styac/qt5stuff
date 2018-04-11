@@ -40,6 +40,7 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
     Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
+    Q_PROPERTY(int valueId READ valueId WRITE setValueId)
     Q_PROPERTY(int singleStep READ singleStep WRITE setSingleStep)
     Q_PROPERTY(int pageStep READ pageStep WRITE setPageStep)
     Q_PROPERTY(int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
@@ -57,6 +58,7 @@ public:
     void setSingleStep(int);
     void setPageStep(int);
     void setUserEventValue(int);
+    void setValueId(int);
 
     void initTransformParameters( double p0, double p1);
     bool registerTransformFunctions(
@@ -79,6 +81,7 @@ public:
     int pageStep() const;
     int sliderPosition() const;
     int userEventValue() const;
+    int valueId() const;
 
 public Q_SLOTS:
     void setValue(double);
@@ -90,7 +93,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void sliderPositionChanged(int value);
-    void valueChanged(double value);
+    void valueChanged(double value, int valueId);
     void rangeChanged(int min, int max);
 
 protected:

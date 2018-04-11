@@ -38,6 +38,8 @@ public:
     QyBase::ValueTransfomer controllerTransformer;
     int lastPosition;
     int userEventValue;
+    int valueId;
+    int remoteControlledColorAlpha;
 
     union {
         uint flags;

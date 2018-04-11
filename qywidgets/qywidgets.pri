@@ -1,6 +1,6 @@
 # include into each *pro
 #CONF = release
-CONF = debug
+#CONF = debug
 
 CONFIG += $$CONF
 DESTDIR = $$clean_path( $$PWD/../qywidgets_build/$$CONF )

@@ -26,12 +26,18 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect( ui.dial_test_middle, &QyAbstractController::valueChanged,
         this, &MainWindow::changedValueMiddle );
 
+    ui.dial_test_middle_sym->setValueId(1);
+    QObject::connect( ui.dial_test_middle_sym, &QyAbstractController::valueChanged,
+        this, &MainWindow::changedValueMiddle );
+
     // direct connection
     QObject::connect( ui.dial_test_big, &QyAbstractController::sliderPositionChanged,
         ui.dial_test_middle, &QyAbstractController::setSliderPosition );
 
 
-    ui.dial_test_middle->setDisabled(true);
+    //ui.dial_test_middle->setDisabled(true);
+    ui.dial_test_middle->setRemoteControlled(true);
+
 //    ui.dial_test_middle->setEnabled(false);
     ui.dial_test_big->setEmitSliderValue(true);
 
@@ -56,14 +62,14 @@ void MainWindow::handleUserEvent(int val,int kmods)
 }
 
 
-void MainWindow::changedValueMiddle(double val)
+void MainWindow::changedValueMiddle(double val, int valueId)
 {
-    qDebug() << "++++++ changedValueMiddle " << val;
+    qDebug() << "++++++ changedValueMiddle " << val << " valueId " << valueId;
 }
 
 
-void MainWindow::changedValueBig(double val)
+void MainWindow::changedValueBig(double val, int valueId)
 {
-    qDebug() << "++++++ changedValueBig " << val;
+    qDebug() << "++++++ changedValueBig " << val << " valueId " << valueId;
     ui.dial_test_middle->setValue(val);
 }
