@@ -104,7 +104,7 @@ Q_SIGNALS:
 protected:
     QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent = nullptr);
     void valueToClipboardFormat( QString& res );
-    void valueFromClipboardFormat( const QString& res );
+    bool valueFromClipboardFormat( const QString& res );
 
 private:
     Q_DISABLE_COPY(QyAbstractController)

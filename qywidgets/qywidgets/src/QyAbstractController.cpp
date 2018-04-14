@@ -368,40 +368,48 @@ void QyAbstractController::valueToClipboardFormat( QString& res )
         ).arg( d->valuePhysicalType ).arg( value() ).arg( caption ));
 }
 
-void QyAbstractController::valueFromClipboardFormat( const QString& res )
+bool QyAbstractController::valueFromClipboardFormat( const QString& res )
 {
     Q_D(QyAbstractController);
     int size = res.size();
     if( size < 20 ) { // check the valid minimum
-        return;
+        return false;
     }
     int posLeftTit = res.indexOf('{');
     if( posLeftTit < 0 ) {
-        return;
+        return false;
     }
     int posRigthTit = res.indexOf('}');
     if( posRigthTit < 0 ) {
-        return;
+        return false;
     }
     QStringRef subs(&res, posLeftTit + 1, posRigthTit - posLeftTit - 1);
     QStringList maps = subs.toString().split(',', QString::SkipEmptyParts);
     if( maps.size() < 4 ) {
-        return;
+        return false;
     }
     QStringList typeStr = maps[1].split(':', QString::SkipEmptyParts);
     if( typeStr[0].indexOf("type") < 0 ) { // use QRegularExpression
-        return;
+        return false;
     }
     QStringList valueStr = maps[2].split(':', QString::SkipEmptyParts);
     if( valueStr[0].indexOf("value") < 0 ) { // use QRegularExpression
-        return;
+        return false;
     }
 
-    int type = typeStr[1].toInt();
-    if( type == int(d->valuePhysicalType) ) {
-        double value = valueStr[1].toDouble();
-        setValue(value);
+    bool ok;
+    int type = typeStr[1].toInt( &ok );
+    if( ! ok ) {
+        return false;
     }
+    if( type == int(d->valuePhysicalType) ) {
+        double value = valueStr[1].toDouble( &ok );
+        if( ! ok ) {
+            return false;
+        }
+        return d->controllerTransformer.setValue( value, 0 );
+    }
+    return false;
 }
 
 

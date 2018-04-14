@@ -285,7 +285,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
             break;
         case Qt::Key_End:
             // no  for symmetric
-            // define a flag to enable
+            // TODO define a flag to enable ?
             break;
         default:
             ev->ignore();
@@ -300,7 +300,11 @@ void QyController::keyPressEvent(QKeyEvent *ev)
     } else {
 #if QyClipboard_use==1
         if(( kMods & Qt::ControlModifier ) && ( key == Qt::Key_V )) {
-            valueFromClipboardFormat( QyClipboard::past() );
+            if( ! valueFromClipboardFormat( QyClipboard::past() ) ) {
+                return;
+            }
+        } else {
+            return;
         }
 #endif
     }
@@ -309,6 +313,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
     emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
+        // TODO check if thie ok
         emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
     }
 }
