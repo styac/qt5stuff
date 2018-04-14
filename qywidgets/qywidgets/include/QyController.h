@@ -68,7 +68,8 @@ class QYWIDGET_LIBSHARED_EXPORT QyController: public QyAbstractController
     Q_OBJECT
 
 public:
-    explicit QyController(QWidget *parent = nullptr);
+    explicit QyController( QWidget *parent = nullptr );
+    QyController( int valueId, int userEventValue, QWidget *parent = nullptr);
 
     ~QyController();
 

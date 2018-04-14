@@ -86,10 +86,22 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     const auto& textRect = opt->styleData->valueTextRect;
     auto textBoxPlacement = opt->styleData->textBoxPlacement;
 
-    if( width < minSizeForText) {   // TODO test
+    if( width < minSizeForText) {   // TODO test -- ?
         textBoxPlacement = Qy::TB_NoTextBox;
     }
+
+    p->save();
+    QPen text( opt->styleData->textColor );
+    if( opt->styleData->caption.size() ) {
+        // print caption
+        int textAlign = Qt::AlignHCenter | Qt::AlignVCenter;
+        p->setPen(text);
+        p->drawText(opt->styleData->captionTextRect,textAlign,opt->styleData->caption);
+    }
+
     switch( opt->styleData->graphicStyle ) {
+    case Qy::GS_NoGraphics:
+        break;
 // ----------------------------
 //    case QyStyleOptionController::GS_Slider:
 //        {
@@ -97,14 +109,13 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
 //        }
 //        return;
 // ----------------------------
-    case Qy::GS_Gauge:
+    case Qy::GS_Rotary:
         {
             const int slotSize = opt->styleData->slotSize;
             const int arcBegin = opt->styleData->arcBegin;
             QRect rect( opt->styleData->graphicsRect );
             int fullArc = circleFracDegree - 2*slotSize; //opt->slotSize; -- not needed
             int valDeg = -opt->valueDisplay->getPaintValue(fullArc,0);
-            p->save();
             p->setRenderHint(QPainter::Antialiasing);
             QPen leftPen( leftColor );
             leftPen.setWidth(painterWidth);
@@ -122,7 +133,7 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
         break;
 
 // ----------------------------
-    case Qy::GS_HalfGauge:
+    case Qy::GS_HalfRotary:
         {
             constexpr int slotSize = 90*fracDegree;
             constexpr int arcBegin = 180*fracDegree;
@@ -171,14 +182,14 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
         break;
 
     default:
+        p->restore();
         return;
     }
 
     int textAlign = Qt::AlignHCenter | Qt::AlignVCenter;
-    QPen text( opt->styleData->textColor );
+//    QPen text( opt->styleData->textColor );
     p->setPen(text);
-    p->drawText(textRect,textAlign,opt->valueDisplay->getValueString(0));
-    p->restore();
+    p->drawText(textRect,textAlign,opt->valueDisplay->getValueString(0)); //
 }
 
 QT_END_NAMESPACE

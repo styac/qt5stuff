@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui.dial_test_middle->setRemoteControlled(true);
 
 //    ui.dial_test_middle->setEnabled(false);
+    ui.dial_test_big->setCaption("caption");
     ui.dial_test_big->setEmitSliderValue(true);
 
     ui.dial_test_middle_sym->setSymmetric(true);

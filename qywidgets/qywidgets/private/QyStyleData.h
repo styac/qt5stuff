@@ -32,7 +32,8 @@ struct StyleData {
     static constexpr int minMargin = 2;
 
     StyleData()
-    : graphicStyle(Qy::GS_Gauge)
+    : caption()
+    , graphicStyle(Qy::GS_Rotary)
     , textBoxPlacement(Qy::TB_AutoTextBox)
     , subIndicatorStyle(Qy::SIS_Auto)
     , colorStyle(Qy::CS_Auto)
@@ -45,6 +46,7 @@ struct StyleData {
     , rightColorDisabled(255,128,128,128)
     , graphicsRect()
     , valueTextRect()
+    , captionTextRect()
     , infoTextRect()
     , margins()
     , sizeHint()
@@ -71,6 +73,7 @@ struct StyleData {
         rightColor.setAlpha(enabledAlpha);
         rightColorDisabled.setAlpha(disabledAlpha);
     }
+    QString                 caption;
 
     Qy::GraphicStyle        graphicStyle;
     Qy::TextBoxPlacement    textBoxPlacement;
@@ -90,6 +93,7 @@ struct StyleData {
 
     QRect       graphicsRect;
     QRect       valueTextRect;
+    QRect       captionTextRect;
     QRect       infoTextRect;
     QMargins    margins;
 

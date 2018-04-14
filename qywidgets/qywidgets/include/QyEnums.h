@@ -31,8 +31,8 @@ public:
         // controller   = vv[0]
         GS_NoGraphics,          // selects Qy_AutoDisplay
         GS_Slider,              // classic line
-        GS_Gauge,               // classic circle
-        GS_HalfGauge,           // half circle
+        GS_Rotary,               // classic circle
+        GS_HalfRotary,           // half circle
         GS_Triangle,            // typical volume control
         GS_RoundLed,
         GS_SquareLed,
@@ -85,6 +85,19 @@ public:
     };
 
     Q_ENUM(SubIndicatorStyle);
+
+    enum ValuePhysicalType : uint8_t  {
+        VPT_Number,
+        VPT_Time_Sec,
+        VPT_Mass_Gram,
+        VPT_Energy_Joule,
+        VPT_Length_Meter,
+        VPT_Frequency_Hertz,
+
+        VPT_MAX,
+    };
+
+    Q_ENUM(ValuePhysicalType);
 
 private:
     Qy() = delete;

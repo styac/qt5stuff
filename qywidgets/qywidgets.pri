@@ -49,7 +49,8 @@ SOURCES += \
     qywidgets/src/QyIndicator.cpp \
     qywidgets/src/QyColors.cpp \
     qywidgets/src/QyTransfomerParameters.cpp \
-    qywidgets/src/QyValueTransfomer.cpp
+    qywidgets/src/QyValueTransfomer.cpp \
+    $$PWD/qywidgets/src/QyClipboard.cpp
 
 HEADERS += \
     qywidgets/private/QyController_p.h \
@@ -70,5 +71,7 @@ HEADERS += \
     qywidgets/include/QyTypes.h \
     qywidgets/include/QyConsts.h \
     qywidgets/include/QyTransfomerParameters.h \
-    qywidgets/include/QyGlobal.h
+    qywidgets/include/QyGlobal.h \
+    $$PWD/qywidgets/include/QyWidgetVector.h \
+    $$PWD/qywidgets/include/QyClipboard.h
 

@@ -37,7 +37,6 @@ QyAbstractControllerPrivate::QyAbstractControllerPrivate()
     , remoteControlledColorAlpha(128)
     , flags(0)
 {
-    qDebug() << "--ctor--  QyAbstractControllerPrivate";
 }
 
 QyAbstractControllerPrivate::~QyAbstractControllerPrivate()
@@ -162,10 +161,23 @@ void QyAbstractController::setUserEventValue(int val)
     d->userEventValue = val;
 }
 
+void QyAbstractController::setValuePhysicalType(Qy::ValuePhysicalType val)
+{
+    Q_D(QyAbstractController);
+    d->valuePhysicalType = val;
+}
+
+
 int QyAbstractController::userEventValue() const
 {
     Q_D(const QyAbstractController);
     return d->userEventValue;
+}
+
+Qy::ValuePhysicalType QyAbstractController::valuePhysicalType() const
+{
+    Q_D(const QyAbstractController);
+    return d->valuePhysicalType;
 }
 
 void QyAbstractController::setSymmetric( bool val )
@@ -341,6 +353,57 @@ bool QyAbstractController::registerTransformFunctions(
     Q_D(QyAbstractController);
     return d->controllerTransformer.registerTransformFunctions(slider2value, value2slider, setValueRange);
 }
+
+
+void QyAbstractController::valueToClipboardFormat( QString& res )
+{
+    Q_D(QyAbstractController);
+    QString caption( d->styleData.caption.size() ? d->styleData.caption : "_" );
+    res.append( QString(
+        "{ object : QyController ,"
+        " type : %0 ,"
+        " value : %1 ,"
+        " caption : \"%2\" "
+        "}"
+        ).arg( d->valuePhysicalType ).arg( value() ).arg( caption ));
+}
+
+void QyAbstractController::valueFromClipboardFormat( const QString& res )
+{
+    Q_D(QyAbstractController);
+    int size = res.size();
+    if( size < 20 ) { // check the valid minimum
+        return;
+    }
+    int posLeftTit = res.indexOf('{');
+    if( posLeftTit < 0 ) {
+        return;
+    }
+    int posRigthTit = res.indexOf('}');
+    if( posRigthTit < 0 ) {
+        return;
+    }
+    QStringRef subs(&res, posLeftTit + 1, posRigthTit - posLeftTit - 1);
+    QStringList maps = subs.toString().split(',', QString::SkipEmptyParts);
+    if( maps.size() < 4 ) {
+        return;
+    }
+    QStringList typeStr = maps[1].split(':', QString::SkipEmptyParts);
+    if( typeStr[0].indexOf("type") < 0 ) { // use QRegularExpression
+        return;
+    }
+    QStringList valueStr = maps[2].split(':', QString::SkipEmptyParts);
+    if( valueStr[0].indexOf("value") < 0 ) { // use QRegularExpression
+        return;
+    }
+
+    int type = typeStr[1].toInt();
+    if( type == int(d->valuePhysicalType) ) {
+        double value = valueStr[1].toDouble();
+        setValue(value);
+    }
+}
+
 
 QT_END_NAMESPACE
 

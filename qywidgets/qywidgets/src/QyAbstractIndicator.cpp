@@ -44,9 +44,21 @@ QyAbstractIndicatorPrivate::~QyAbstractIndicatorPrivate()
 
 void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator * thp )
 {
-    qDebug() << "recalculateStyleData ";
-    const int minDimension = qMin(thp->rect().width(), thp->rect().height());
-    const int diffDimension = thp->rect().width() - thp->rect().height();
+    QFontMetrics qFontMetrics(thp->font());
+    const int fontHeight = qFontMetrics.height();
+    const int captionHeight = styleData.caption.size() == 0 ? 0 : fontHeight + 4; // margin? ++ should even !
+    const int width = thp->rect().width();
+    const int height = thp->rect().height() + captionHeight;
+    const int minDimension = qMin(width, height);
+    const int diffDimension = width - height;
+    if( captionHeight ) {
+        styleData.captionTextRect.setHeight(captionHeight);
+        styleData.captionTextRect.setWidth(width);
+    } else {
+        styleData.captionTextRect.setHeight(0);
+        styleData.captionTextRect.setWidth(0);
+    }
+    qDebug() << "recalculateStyleData  fontHeight: " << fontHeight ;
 
     styleData.painterWidth = qMax( int(StyleData::minPainterWidth),
         qMin( minDimension / StyleData::adjPainterWidth, int(StyleData::maxPainterWidth) ));
@@ -65,10 +77,10 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
 
         }
         break;
-    case Qy::GS_Gauge:
+    case Qy::GS_Rotary:
         {
             if( diffDimension > 0) {
-                styleData.graphicsRect.adjust(diffDimension/2+margin, margin, -diffDimension/2-margin,-margin);
+                styleData.graphicsRect.adjust(diffDimension/2 + margin + captionHeight/2, margin + captionHeight, -diffDimension/2 - margin - captionHeight/2,-margin);
             } else {
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
@@ -77,7 +89,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
             // infoTextRect - one line under
         }
         break;
-    case Qy::GS_HalfGauge:
+    case Qy::GS_HalfRotary:
         {
 
         }
@@ -96,26 +108,6 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
         {
 
         }
-        break;
-//    case Qy::GS_TwinSlider:
-//        {
-
-//        }
-//        break;
-//    case Qy::GS_TwinHalfGauge:
-//        {
-
-//        }
-//        break;
-//    case Qy::GS_ConcentricGauge:
-//        {
-
-//        }
-//        break;
-//    case Qy::GS_ConcentricHalfGauge:
-//        {
-
-//        }
         break;
     default:
         return;
@@ -157,17 +149,18 @@ QyAbstractIndicator::~QyAbstractIndicator()
 }
 
 
-QString const& QyAbstractIndicator::title() const
+QString const& QyAbstractIndicator::caption() const
 {
     Q_D(const QyAbstractIndicator);
-    return d->title;
+    return d->styleData.caption;
 }
 
 
-void QyAbstractIndicator::setTitle(QString const& val)
+void QyAbstractIndicator::setCaption(QString const& val)
 {
     Q_D(QyAbstractIndicator);
-    d->title = val;
+    d->styleData.caption = val;
+
 }
 
 // TODO

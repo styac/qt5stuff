@@ -40,6 +40,7 @@ public:
     int userEventValue;
     int valueId;
     int remoteControlledColorAlpha;
+    Qy::ValuePhysicalType valuePhysicalType;
 
     union {
         uint flags;

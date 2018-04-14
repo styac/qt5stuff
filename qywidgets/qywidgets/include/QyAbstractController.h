@@ -44,7 +44,10 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_PROPERTY(int singleStep READ singleStep WRITE setSingleStep)
     Q_PROPERTY(int pageStep READ pageStep WRITE setPageStep)
     Q_PROPERTY(int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
+    Q_PROPERTY(Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType)
 
+    // value multiplier for clipbord : e.q. msec to sec
+    // Q_PROPERTY(double cbMultiplier READ cbMultiplier WRITE setCbMultiplier)
     // will be passed by the userEvent signal
     Q_PROPERTY(int userEventValue READ userEventValue WRITE setUserEventValue)
 
@@ -59,6 +62,7 @@ public:
     void setPageStep(int);
     void setUserEventValue(int);
     void setValueId(int);
+    void setValuePhysicalType(Qy::ValuePhysicalType);
 
     void initTransformParameters( double p0, double p1);
     bool registerTransformFunctions(
@@ -82,6 +86,7 @@ public:
     int sliderPosition() const;
     int userEventValue() const;
     int valueId() const;
+    Qy::ValuePhysicalType valuePhysicalType() const;
 
 public Q_SLOTS:
     void setValue(double);
@@ -98,6 +103,8 @@ Q_SIGNALS:
 
 protected:
     QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent = nullptr);
+    void valueToClipboardFormat( QString& res );
+    void valueFromClipboardFormat( const QString& res );
 
 private:
     Q_DISABLE_COPY(QyAbstractController)

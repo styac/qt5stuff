@@ -18,30 +18,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyStyleData.h"
-#include "QyValueTransfomer.h"
-#include <private/qwidget_p.h>
-#include <private/qframe_p.h>
+#define QyClipboard_use 1
 
-QT_BEGIN_NAMESPACE
+#if QyClipboard_use==1
 
+#include <QString>
 
-class QyAbstractIndicatorPrivate : public QFramePrivate
-{
-    Q_DECLARE_PUBLIC(QyAbstractIndicator)
+namespace QyClipboard {
 
-public:
-    QyAbstractIndicatorPrivate( bool res0 = false );
-    ~QyAbstractIndicatorPrivate();
+QString past();
+void copy( const QString& text );
 
-    void recalculateStyleData( const QyAbstractIndicator * thp );
-    QyBase::ValueVector     valueVector;
-    QyBase::ValueTransfomer indicatorTransformer;
-    QColor leftColor;
-    QColor rightColor;
-    QColor remoteControlledColor;
-    StyleData styleData;
-};
+} // end namespace QyClipboard
 
-QT_END_NAMESPACE
-
+#endif

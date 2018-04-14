@@ -18,30 +18,47 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyStyleData.h"
-#include "QyValueTransfomer.h"
-#include <private/qwidget_p.h>
-#include <private/qframe_p.h>
+#include <QtWidgets>
+#include <QVector>
 
 QT_BEGIN_NAMESPACE
 
+// DOESN'T DELETE THE WIDGETS
 
-class QyAbstractIndicatorPrivate : public QFramePrivate
-{
-    Q_DECLARE_PUBLIC(QyAbstractIndicator)
-
+template< class WidgetType >
+class QyWidgetVector {
 public:
-    QyAbstractIndicatorPrivate( bool res0 = false );
-    ~QyAbstractIndicatorPrivate();
+    QyWidgetVector() = delete;
+    inline QyWidgetVector( uint32_t vectorSize, QWidget * parent = 0 )
+    :   wv()
+    {
+        for( uint32_t i = 0; i < vectorSize; ++ i ) {
+            WidgetType * w = new WidgetType( parent );
+            wv.push_back(w);
+        }
+    }
 
-    void recalculateStyleData( const QyAbstractIndicator * thp );
-    QyBase::ValueVector     valueVector;
-    QyBase::ValueTransfomer indicatorTransformer;
-    QColor leftColor;
-    QColor rightColor;
-    QColor remoteControlledColor;
-    StyleData styleData;
+    ~QyWidgetVector()
+    {
+    }
+
+    inline auto& get()
+    {
+        return wv;
+    }
+
+    inline const auto& get() const
+    {
+        return wv;
+    }
+    // add to layout
+//    inline void addLayout( )
+//    {
+
+//    }
+
+private:
+    QVector<WidgetType> wv;
 };
 
 QT_END_NAMESPACE
-
