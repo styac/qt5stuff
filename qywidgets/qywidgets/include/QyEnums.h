@@ -86,14 +86,34 @@ public:
 
     Q_ENUM(SubIndicatorStyle);
 
+// practically controllable units
+// for only cut and past
+// the value can be pasted only if types are equal
+
     enum ValuePhysicalType : uint8_t  {
         VPT_Number,
-        VPT_Time_Sec,
-        VPT_Mass_Gram,
-        VPT_Energy_Joule,
-        VPT_Length_Meter,
-        VPT_Frequency_Hertz,
-
+        VPT_DecibelAmplitude,
+        VPT_DecibelPower,
+        VPT_NoteIntervalCent,  // 1 octave 1200 cent
+        VPT_NoteIntervalYCent, // 1 octave 2^24 ycent
+        VPT_Frequency,
+        VPT_Time,
+        VPT_Power,
+        VPT_Current,
+        VPT_Voltage,
+        VPT_Capacity,
+        VPT_Inductivity,
+        VPT_Resistance,
+        VPT_User_0,
+        VPT_User_1,
+        VPT_User_2,
+        VPT_User_3,
+        VPT_User_4,
+        VPT_User_5,
+        VPT_User_6,
+        VPT_User_7,
+        VPT_User_8,
+        VPT_User_9,
         VPT_MAX,
     };
 

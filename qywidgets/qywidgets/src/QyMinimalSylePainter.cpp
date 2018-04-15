@@ -60,7 +60,6 @@ protected:
 
 QT_BEGIN_NAMESPACE
 
-// style > full, half horizontal vertical
 void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
 {
     constexpr int fracDegree = 16;     // 5760 (16 * 360).
@@ -93,7 +92,6 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     p->save();
     QPen text( opt->styleData->textColor );
     if( opt->styleData->caption.size() ) {
-        // print caption
         int textAlign = Qt::AlignHCenter | Qt::AlignVCenter;
         p->setPen(text);
         p->drawText(opt->styleData->captionTextRect,textAlign,opt->styleData->caption);
@@ -102,12 +100,6 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     switch( opt->styleData->graphicStyle ) {
     case Qy::GS_NoGraphics:
         break;
-// ----------------------------
-//    case QyStyleOptionController::GS_Slider:
-//        {
-        //  QPainter::drawLine(int x1, int y1, int x2, int y2)
-//        }
-//        return;
 // ----------------------------
     case Qy::GS_Rotary:
         {
@@ -121,10 +113,12 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
             leftPen.setWidth(painterWidth);
             QPen rightPen( rightColor );
             rightPen.setWidth(painterWidth);
+
             p->setPen( rightPen );
             p->drawArc(rect, arcBegin+valDeg, -fullArc-valDeg);
             p->setPen( leftPen );
             p->drawArc(rect, arcBegin, valDeg);
+
             if( textBoxPlacement == Qy::TB_NoTextBox ) {
                  p->restore();
                  return;
@@ -135,61 +129,45 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
 // ----------------------------
     case Qy::GS_HalfRotary:
         {
-            constexpr int slotSize = 90*fracDegree;
-            constexpr int arcBegin = 180*fracDegree;
-
-        //    QColor buttonColorNoval(150,150,150,150); // = pal.foreground().color();
-
-        //            int width = dial->rect.width();
-        //            int height = dial->rect.height();
-        //            qreal r = qMin(width, height) / 2;
-        //            qreal d_ = r / 6;
-        //            qreal dx = dial->rect.x() + d_ + (width - 2 * r) / 2 + 1;
-        //            qreal dy = dial->rect.y() + d_ + (height - 2 * r) / 2 + 1;
-        //            QRect br = QRect(int(dx), int(dy), int(r * 2 - 2 * d_ - 2), int(r * 2 - 2 * d_ - 2));
-
-            // auto orientation = opt->orientation;
-            // opt->upsideDown
-            QPoint tp(opt->rect.x() + borderDisterDisterDist, opt->rect.y() + borderDisterDisterDist );
-            int s = qMin(width, height) - borderDisterDisterDist*2;
-            QSize si(s,s);
-            QRect rect(tp,si);
-        //    int sl = 8; // slot under
-//            float dif = maxV-minV;
-//            float valf = (val-minV) / dif;
-        //    int begarc = 270*fracDegree - opt->slotSize;
+//            constexpr int slotSize = 90*fracDegree;
+//            constexpr int arcBegin = 180*fracDegree;
+            const int slotSize = opt->styleData->slotSize;
+            const int arcBegin = opt->styleData->arcBegin;
+            QRect rect( opt->styleData->graphicsRect );
             int fullArc = circleFracDegree - 2*slotSize; //opt->slotSize; -- not needed
-//            int valDeg = -fullArc * valf;
             int valDeg = -opt->valueDisplay->getPaintValue(fullArc,0);
-
-            p->save();
             p->setRenderHint(QPainter::Antialiasing);
-            QPen penVal( opt->styleData->leftColor );
-            penVal.setWidth(painterWidth);
-            penVal.setCapStyle(Qt::FlatCap);
-            QPen penNoVal( opt->styleData->rightColor );
-            penNoVal.setWidth(painterWidth);
-            penNoVal.setCapStyle(Qt::FlatCap);
-            p->setPen( penNoVal );
+            QPen leftPen( leftColor );
+            leftPen.setWidth(painterWidth);
+            QPen rightPen( rightColor );
+            rightPen.setWidth(painterWidth);
+
+            p->setPen( rightPen );
             p->drawArc(rect, arcBegin+valDeg, -fullArc-valDeg);
-            p->setPen( penVal );
+            p->setPen( leftPen );
             p->drawArc(rect, arcBegin, valDeg);
+
             if( textBoxPlacement == Qy::TB_NoTextBox ) {
-                p->restore();
-                return;
+                 p->restore();
+                 return;
             }
         }
         break;
+// ----------------------------
+//    case QyStyleOptionController::GS_Slider:
+//        {
+        //  QPainter::drawLine(int x1, int y1, int x2, int y2)
+//        }
+//        return;
 
     default:
         p->restore();
         return;
     }
-
     int textAlign = Qt::AlignHCenter | Qt::AlignVCenter;
-//    QPen text( opt->styleData->textColor );
     p->setPen(text);
     p->drawText(textRect,textAlign,opt->valueDisplay->getValueString(0)); //
+    p->restore();
 }
 
 QT_END_NAMESPACE

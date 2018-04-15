@@ -83,8 +83,14 @@ void QyAbstractControllerPrivate::setSteps(int single, int page)
 QyAbstractController::QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent)
     : QyAbstractIndicator(dd, parent)
 {
-    qDebug() << "--ctor--  QyAbstractIndicator-dd";
+    // TODO cleanup
+    constexpr int alphaEnabled = 255;
+    constexpr int alphaDisabled = 64;
+    Q_D(QyAbstractController);
     setSymmetric(false);
+    d->styleData.setColors( d->leftColor, this->palette().color(QPalette::Window).darker(),
+        alphaEnabled, alphaDisabled );
+
 }
 
 QyAbstractController::~QyAbstractController()
@@ -186,10 +192,10 @@ void QyAbstractController::setSymmetric( bool val )
     constexpr int alphaDisabled = 64;
     Q_D(QyAbstractController);
     if( d->controllerTransformer.setSymmetric(val) ) {
-        d->styleData.setColors( d->leftColor
-            , val ? d->rightColor : this->palette().color(QPalette::Window).darker()
-            , alphaEnabled
-            , alphaDisabled );
+//        d->styleData.setColors( d->leftColor
+//            , val ? d->rightColor : this->palette().color(QPalette::Window).darker()
+//            , alphaEnabled
+//            , alphaDisabled );
         d->controllerTransformer.reset(0);
         update();
     }

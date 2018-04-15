@@ -32,7 +32,6 @@ ValueTransfomer::ValueTransfomer( ValueVector& vvr, bool r0 )
 {
     setValueRange(this, 0.0, 100.0);
     init();
-       qDebug() << "--ctor--  ValueTransfomer";
 }
 
 bool ValueTransfomer::init()

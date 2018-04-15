@@ -48,15 +48,18 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
     const int fontHeight = qFontMetrics.height();
     const int captionHeight = styleData.caption.size() == 0 ? 0 : fontHeight + 4; // margin? ++ should even !
     const int width = thp->rect().width();
-    const int height = thp->rect().height() + captionHeight;
+    const int height = thp->rect().height() - captionHeight;
     const int minDimension = qMin(width, height);
-    const int diffDimension = width - height;
+    const int diffDimension = (width - height)/2;
     if( captionHeight ) {
         styleData.captionTextRect.setHeight(captionHeight);
         styleData.captionTextRect.setWidth(width);
+        styleData.graphicsRect = thp->rect().adjusted(0,captionHeight,0,0);
     } else {
-        styleData.captionTextRect.setHeight(0);
-        styleData.captionTextRect.setWidth(0);
+// not used
+//        styleData.captionTextRect.setHeight(0);
+//        styleData.captionTextRect.setWidth(0);
+        styleData.graphicsRect = thp->rect();
     }
     qDebug() << "recalculateStyleData  fontHeight: " << fontHeight ;
 
@@ -64,7 +67,6 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
         qMin( minDimension / StyleData::adjPainterWidth, int(StyleData::maxPainterWidth) ));
 
     const int margin = (styleData.minMargin + styleData.painterWidth);
-    styleData.graphicsRect = thp->rect();
 
     switch( styleData.graphicStyle ) {
     case Qy::GS_NoGraphics:
@@ -79,8 +81,11 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
         break;
     case Qy::GS_Rotary:
         {
+            // handle orientation, mirroring,...
+            styleData.slotSize = 24*styleData.fracDegree;
+            styleData.arcBegin = 270*styleData.fracDegree - styleData.slotSize;
             if( diffDimension > 0) {
-                styleData.graphicsRect.adjust(diffDimension/2 + margin + captionHeight/2, margin + captionHeight, -diffDimension/2 - margin - captionHeight/2,-margin);
+                styleData.graphicsRect.adjust(diffDimension + margin, margin, -diffDimension - margin, -margin);
             } else {
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
@@ -91,6 +96,17 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
         break;
     case Qy::GS_HalfRotary:
         {
+            // handle orientation, mirroring,...
+            styleData.slotSize = 90*styleData.fracDegree;
+            styleData.arcBegin = 180*styleData.fracDegree;
+            // box optimize, text align
+            if( diffDimension > 0) {
+                styleData.graphicsRect.adjust(diffDimension + margin, margin, -diffDimension - margin, -margin);
+            } else {
+                styleData.graphicsRect.setBottom(minDimension);
+                styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
+            }
+            styleData.valueTextRect = styleData.graphicsRect.adjusted(0,0,0,0 );
 
         }
         break;
@@ -138,7 +154,6 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
 QyAbstractIndicator::QyAbstractIndicator(QyAbstractIndicatorPrivate &dd, QWidget *parent)
     :QFrame(dd, parent, 0)
 {
-    qDebug() << "--ctor--  QyAbstractIndicator-dd";
     setSymmetric(false);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QyBase::Rainbow::getInstance().set0( this->palette().color(QWidget::backgroundRole()) );
@@ -159,8 +174,12 @@ QString const& QyAbstractIndicator::caption() const
 void QyAbstractIndicator::setCaption(QString const& val)
 {
     Q_D(QyAbstractIndicator);
+    if( d->styleData.caption == val ) {
+        return;
+    }
     d->styleData.caption = val;
-
+    d->recalculateStyleData(this);
+    update();
 }
 
 // TODO
@@ -202,10 +221,10 @@ void QyAbstractIndicator::setSymmetric( bool val )
     constexpr int alphaEnabled = 255;
     Q_D(QyAbstractIndicator);
     if( d->indicatorTransformer.setSymmetric(val) ) {
-        d->styleData.setColors( d->leftColor
-            , val ? d->rightColor : this->palette().color(QPalette::Window).darker()
-            , alphaEnabled
-            , alphaEnabled );
+//        d->styleData.setColors( d->leftColor
+//            , val ? d->rightColor : this->palette().color(QPalette::Window).darker()
+//            , alphaEnabled
+//            , alphaEnabled );
         update();
     }
 }
@@ -273,6 +292,9 @@ bool QyAbstractIndicator::registerTransformFunctions( QyBase::TransfomerParamete
 void QyAbstractIndicator::setMirrored ( bool val )
 {
     Q_D(QyAbstractIndicator);
+    if( d->styleData.mirrored == val ) {
+        return;
+    }
     d->styleData.mirrored = val;
     d->recalculateStyleData(this);
     update();
@@ -281,6 +303,9 @@ void QyAbstractIndicator::setMirrored ( bool val )
 void QyAbstractIndicator::setInvertedFlow ( bool val )
 {
     Q_D(QyAbstractIndicator);
+    if( d->styleData.invertedFlow == val ) {
+        return;
+    }
     d->styleData.invertedFlow = val;
     d->recalculateStyleData(this);
     update();

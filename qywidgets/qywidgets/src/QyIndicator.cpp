@@ -46,8 +46,6 @@ QyIndicator::QyIndicator(QWidget *parent)
 {
     Q_D(QyIndicator);
     d->init();
-    qDebug() << "--ctor--  QyIndicator-new";
-
 }
 
 QyIndicator::~QyIndicator()
@@ -65,7 +63,7 @@ void QyIndicator::paintEvent(QPaintEvent * e)
     QyStyleOption option;
     initStyleOption(&option);
     drawQyMinimalStyle(&option, &p);
-    qDebug() << " ** paintEvent: " << e ;
+//    qDebug() << " ** paintEvent: " << e ;
 }
 
 // does nothing

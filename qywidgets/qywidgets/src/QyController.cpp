@@ -78,7 +78,7 @@ void QyController::paintEvent(QPaintEvent * e)
     QyStyleOption option;
     initStyleOption(&option);
     drawQyMinimalStyle(&option, &p);
-    qDebug() << " ** paintEvent: " << e ;
+//    qDebug() << " ** paintEvent: " << e ;
 }
 
 void QyController::mouseDoubleClickEvent(QMouseEvent * e)
@@ -182,16 +182,17 @@ bool QyController::event(QEvent *e)
 
 void QyController::enterEvent(QEvent *e)
 {
-    qDebug() << " ** enterEvent: " << e ;
-//    QToolTip::showText( this->pos(), "test" );
+//    auto ev = static_cast<QEnterEvent *>(e);
+//    qDebug() << " ** enterEvent: " << e ;
+//    QToolTip::showText( QWidget::mapToGlobal(this->pos() ) , "-----test-----" );
 // or status
-    update();
+//    update();
 }
 
 void QyController::leaveEvent(QEvent *e)
 {
-    qDebug() << " ** leaveEvent: " << e ;
-    update();
+//    qDebug() << " ** leaveEvent: " << e ;
+//    update();
 }
 
 // userEvent : Key_Delete -- not really used for other activity

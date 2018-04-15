@@ -84,11 +84,10 @@ struct StyleData {
     Qt::Orientation         sequenceOrientation; // for multidisplay
 
     QColor      textColor;
-    // refactor > symmetric - from center left and right 1 color
-    QColor      leftColor;          // for symmetric
-    QColor      rightColor;         // for symmetric
-    QColor      leftColorDisabled;  // for symmetric
-    QColor      rightColorDisabled; // for symmetric
+    QColor      leftColor;
+    QColor      rightColor;
+    QColor      leftColorDisabled;
+    QColor      rightColorDisabled;
     QColor      remoteColor;        // remote controlled state
 
     QRect       graphicsRect;
@@ -103,6 +102,8 @@ struct StyleData {
     int         slotSize;
     int         arcBegin;
     int         painterWidth;
+
+    // int         stateLedValue; // TODO check
 
     union {
         uint flags;

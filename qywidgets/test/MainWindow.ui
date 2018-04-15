@@ -97,13 +97,25 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QyController" name="controller_mid_1"/>
+      <widget class="QyController" name="controller_mid_1">
+       <property name="caption">
+        <string>cap short</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QyController" name="controller_mid_2"/>
+      <widget class="QyController" name="controller_mid_2">
+       <property name="caption">
+        <string>cap long cap long</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QyController" name="controller_mid_3"/>
+      <widget class="QyController" name="controller_mid_3">
+       <property name="graphicStyle">
+        <enum>Qy::GS_HalfRotary</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QyController" name="controller_mid_4"/>
