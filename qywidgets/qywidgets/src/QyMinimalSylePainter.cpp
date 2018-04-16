@@ -73,9 +73,13 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     const auto height = opt->rect.height();
     QColor leftColor(opt->styleData->leftColor);
     QColor rightColor(opt->styleData->rightColor);
+
     if( !(opt->state & QStyle::State_Enabled) ) {
-        leftColor = opt->styleData->leftColorDisabled;
-        rightColor = opt->styleData->rightColorDisabled;
+        leftColor.setAlpha( opt->styleData->disableStateColorAlpha );
+        rightColor.setAlpha( opt->styleData->disableStateColorAlpha );
+    } else if( opt->styleData->remoteControlled ) {
+        leftColor.setAlpha( opt->styleData->remoteStateColorAlpha );
+        rightColor.setAlpha( opt->styleData->remoteStateColorAlpha );
     }
 
     const int squareSize = qMin(width, height);
@@ -129,8 +133,6 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
 // ----------------------------
     case Qy::GS_HalfRotary:
         {
-//            constexpr int slotSize = 90*fracDegree;
-//            constexpr int arcBegin = 180*fracDegree;
             const int slotSize = opt->styleData->slotSize;
             const int arcBegin = opt->styleData->arcBegin;
             QRect rect( opt->styleData->graphicsRect );

@@ -83,7 +83,7 @@ void QyAbstractControllerPrivate::setSteps(int single, int page)
 QyAbstractController::QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent)
     : QyAbstractIndicator(dd, parent)
 {
-    // TODO cleanup
+    // TODO cleanup -- style data
     constexpr int alphaEnabled = 255;
     constexpr int alphaDisabled = 64;
     Q_D(QyAbstractController);
@@ -217,14 +217,15 @@ void QyAbstractController::setRemoteControlled(bool val)
     Q_D(QyAbstractController);
     if( d->remoteControlled != val ) {
         d->remoteControlled = val;
-        // TODO set color  remoteControlledColor
-        if( val ) {
-            d->styleData.leftColor.setAlpha(d->remoteControlledColorAlpha);
-            d->styleData.rightColor.setAlpha(d->remoteControlledColorAlpha);
-        } else {
-            d->styleData.leftColor.setAlpha(255);
-            d->styleData.rightColor.setAlpha(255);
-        }
+        d->styleData.remoteControlled = val;
+//        // TODO set color  remoteControlledColor
+//        if( val ) {
+//            d->styleData.leftColor.setAlpha(d->remoteControlledColorAlpha);
+//            d->styleData.rightColor.setAlpha(d->remoteControlledColorAlpha);
+//        } else {
+//            d->styleData.leftColor.setAlpha(255);
+//            d->styleData.rightColor.setAlpha(255);
+//        }
         update();
     }
 }

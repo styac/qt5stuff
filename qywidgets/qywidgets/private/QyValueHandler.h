@@ -29,8 +29,9 @@ enum class STEPS : uint8_t {
     STEP_SINGLE,
     STEP_SINGLE_PLUS,
     STEP_PAGE,
-//    STEP_ARRAY_SIZE
 };
+
+constexpr uint STEP_ARRAY_SIZE = uint8_t(STEPS::STEP_PAGE) + 1;
 
 class ValueHandler
 {
@@ -39,7 +40,6 @@ public:
     {
         setSingleStep(1);
         setPageStep(1);
-        qDebug() << "--ctor--  ValueHandler";
     }
 
     // in the rate of the range
@@ -82,7 +82,7 @@ public:
     }
 
 protected:
-    int32_t steps[ uint8_t(STEPS::STEP_PAGE) + 1 ];
+    int32_t steps[ STEP_ARRAY_SIZE ];
 };
 
 }  // end Qy

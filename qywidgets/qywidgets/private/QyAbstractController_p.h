@@ -36,10 +36,12 @@ public:
 
     QyBase::ValueHandler    valueHandler;
     QyBase::ValueTransfomer controllerTransformer;
-    int lastPosition;
-    int userEventValue;
-    int valueId;
-    int remoteControlledColorAlpha;
+
+    int     lastPosition;
+    int     userEventValue;
+    int     valueId;
+    int     remoteControlledColorAlpha;
+
     Qy::ValuePhysicalType valuePhysicalType;
 
     union {
@@ -49,7 +51,7 @@ public:
             uint emitSliderValue    : 1;
             uint invertSliderValue  : 1;
             uint pressed            : 1;
-            uint remoteControlled   : 1;
+            uint remoteControlled   : 1; // in styleData
         };
     };
 };

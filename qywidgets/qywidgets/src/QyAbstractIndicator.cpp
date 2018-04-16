@@ -90,7 +90,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
             }
-            styleData.valueTextRect = styleData.graphicsRect.adjusted(0,0,0,0 );
+            styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,0 );
             // infoTextRect - one line under
         }
         break;
@@ -106,7 +106,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
             }
-            styleData.valueTextRect = styleData.graphicsRect.adjusted(0,0,0,0 );
+            styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-fontHeight/2 );
 
         }
         break;
@@ -145,12 +145,6 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
     }
 }
 
-//QyAbstractIndicator::QyAbstractIndicator(QWidget *parent)
-//    :QFrame(*new QyAbstractIndicatorPrivate, parent, 0)
-//{
-//    QyBase::Rainbow::getInstance().set0( this->palette().color(QWidget::backgroundRole()) );
-//}
-
 QyAbstractIndicator::QyAbstractIndicator(QyAbstractIndicatorPrivate &dd, QWidget *parent)
     :QFrame(dd, parent, 0)
 {
@@ -163,13 +157,11 @@ QyAbstractIndicator::~QyAbstractIndicator()
 {
 }
 
-
 QString const& QyAbstractIndicator::caption() const
 {
     Q_D(const QyAbstractIndicator);
     return d->styleData.caption;
 }
-
 
 void QyAbstractIndicator::setCaption(QString const& val)
 {
@@ -235,20 +227,6 @@ bool QyAbstractIndicator::symmetric() const
     return d->indicatorTransformer.getSymmetric();
 }
 
-//QyBase::ValueIO QyAbstractIndicator::value() const
-//{
-//    Q_D(const QyAbstractIndicator);
-//    return d->indicatorTransformer.getValue();
-//}
-
-//void QyAbstractIndicator::setValue(const QyBase::ValueIO& value)
-//{
-//    Q_D(QyAbstractIndicator);
-//    if( d->indicatorTransformer.setValue( value )) {
-//        update();
-//    }
-//}
-
 double QyAbstractIndicator::value(int index) const
 {
     Q_D(const QyAbstractIndicator);
@@ -274,20 +252,6 @@ bool QyAbstractIndicator::registerTransformFunctions( QyBase::TransfomerParamete
     Q_D(QyAbstractIndicator);
     return d->indicatorTransformer.registerTransformFunctions(slider2value, value2slider, setValueRange);
 }
-
-//ValueType QyAbstractIndicator::valueVector() const
-//{
-//    Q_D(const QyAbstractIndicator);
-//    ValueType vv;
-//    // get the pairs from ValueVector
-//    return vv;
-//}
-//void QyAbstractIndicator::setValueVector(const ValueType&)
-//{
-//    Q_D(QyAbstractIndicator);
-//    // set the pairs to ValueVector
-//}
-
 
 void QyAbstractIndicator::setMirrored ( bool val )
 {

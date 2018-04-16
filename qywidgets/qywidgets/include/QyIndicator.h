@@ -49,15 +49,12 @@ protected:
     bool event(QEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
-//    void wheelEvent(QWheelEvent *e) override;
     void enterEvent(QEvent *e) override;
     void leaveEvent(QEvent *e) override;
 
     // what is needed ?
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
-//    void mouseMoveEvent(QMouseEvent *e) override;
-//    void mouseDoubleClickEvent(QMouseEvent *event) override;
     void initStyleOption(QyStyleOption *opt) const;
 
 private:

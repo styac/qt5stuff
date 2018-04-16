@@ -201,6 +201,20 @@ void QyController::keyPressEvent(QKeyEvent *ev)
     auto kMods = QGuiApplication::keyboardModifiers();
     auto key = ev->key();
     Q_D(QyAbstractController);
+
+    // any character with SHIFT A..Z as userEvent
+
+// alternative mouse?
+//    if( kMods == Qt::ShiftModifier ) {
+//        if(( key >= Qt::Key_A ) && (key <= Qt::Key_Z )) {
+//            if( ev->isAutoRepeat() ) {
+//                return; // do not send repeated events
+//            }
+//            emit userEvent( d->userEventValue, key );
+//            return;
+//        }
+//    }
+
     switch( key ) {
         case Qt::Key_Delete:
         if( ev->isAutoRepeat() ) {
@@ -210,6 +224,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
         emit userEvent( d->userEventValue, keyModsInt );
         return;
     }
+
 
 #if QyClipboard_use==1
     if(( kMods & Qt::ControlModifier ) && ( key == Qt::Key_C )) {

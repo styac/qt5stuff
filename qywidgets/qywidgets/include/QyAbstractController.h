@@ -28,11 +28,6 @@ class QyAbstractControllerPrivate;
 class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicator
 {
     Q_OBJECT
-    // maybe to Indicator
-    // Q_PROPERTY(bool showTooltip
-    // Q_PROPERTY(bool showStatus in statusbar : enter or clicked?
-    //    Q_PROPERTY( Qt::QColor remoteControlledColor READ remoteControlledColor WRITE setRemoteControlledColor )
-
     Q_PROPERTY(bool symmetric READ symmetric WRITE setSymmetric)
     Q_PROPERTY(bool emitSliderValue READ emitSliderValue WRITE setEmitSliderValue)
     Q_PROPERTY(bool invertSliderValue READ invertSliderValue WRITE setInvertSliderValue)
@@ -45,10 +40,6 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_PROPERTY(int pageStep READ pageStep WRITE setPageStep)
     Q_PROPERTY(int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
     Q_PROPERTY(Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType)
-
-    // value multiplier for clipbord : e.q. msec to sec
-    // Q_PROPERTY(double cbMultiplier READ cbMultiplier WRITE setCbMultiplier)
-    // will be passed by the userEvent signal
     Q_PROPERTY(int userEventValue READ userEventValue WRITE setUserEventValue)
 
 public:

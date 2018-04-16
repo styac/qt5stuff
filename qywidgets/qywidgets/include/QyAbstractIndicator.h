@@ -18,9 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-// https://wiki.qt.io/How_to_create_a_library_with_Qt_and_use_it_in_an_application
-// http://doc.qt.io/qt-5/sharedlibrary.html
-
 #include "QyTransfomerParameters.h"
 #include "QyEnums.h"
 #include "QyTypes.h"
@@ -40,20 +37,17 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
     Q_PROPERTY( bool invertedFlow READ invertedFlow WRITE setInvertedFlow )
     Q_PROPERTY( bool symmetric READ symmetric WRITE setSymmetric)
     Q_PROPERTY( Qt::Orientation orientation READ orientation WRITE setOrientation )
-    // to QyIndicator
     Q_PROPERTY( Qt::Orientation sequenceOrientation READ sequenceOrientation WRITE setSequenceOrientation )
     Q_PROPERTY( double minimum READ minimum WRITE setMinimum)
     Q_PROPERTY( double maximum READ maximum WRITE setMaximum)
-//    Q_PROPERTY( QyBase::ValueIO value READ value WRITE setValue)
-    //Q_PROPERTY( double value READ value WRITE setValue)
     Q_PROPERTY( Qy::GraphicStyle graphicStyle READ graphicStyle WRITE setGraphicStyle)
     Q_PROPERTY( Qy::TextBoxPlacement textBoxPlacement READ textBoxPlacement WRITE setTextBoxPlacement)
     Q_PROPERTY( Qy::ColorStyle colorStyle READ colorStyle WRITE setColorStyle)
     Q_PROPERTY( QString caption READ caption WRITE setCaption)
 
-//    Q_PROPERTY(QColor textColor READ textColor WRITE setValueColor)
+//    Q_PROPERTY( Qt::QColor valueTextColor READ valueTextColor WRITE setValueTextColor)
 //    Q_PROPERTY( Qt::QColor rightColor READ rightColor WRITE setRightColor )
-//    Q_PROPERTY( Qt::QColor leftColor READ lettColor WRITE setLeftColor )
+//    Q_PROPERTY( Qt::QColor leftColor READ leftColor WRITE setLeftColor )
 
 public:
     ~QyAbstractIndicator();
@@ -75,7 +69,6 @@ public:
     void setTextBoxPlacement(Qy::TextBoxPlacement);
     void setColorStyle(Qy::ColorStyle);
     void setOrientation(Qt::Orientation);
-    // to QyIndicator
     void setSequenceOrientation(Qt::Orientation);
 
     QString const& caption() const;
@@ -84,10 +77,8 @@ public:
     bool invertedFlow() const;
     double minimum() const;
     double maximum() const;
-//    QyBase::ValueIO value() const;
     double value(int) const;
     Qt::Orientation orientation() const;
-    // to QyIndicator
     Qt::Orientation sequenceOrientation() const;
     Qy::GraphicStyle graphicStyle() const;
     Qy::TextBoxPlacement textBoxPlacement() const;
@@ -95,7 +86,6 @@ public:
 
 public Q_SLOTS:
     void setValue(double,int);
-//    void setValue(const QyBase::ValueIO&);
     void setRange(double min, double max);
 
 protected:

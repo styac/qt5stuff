@@ -30,7 +30,6 @@ class QyControllerPrivate : public QyAbstractControllerPrivate
 public:
     QyControllerPrivate()
     {
-        qDebug() << "--ctor--  QyControllerPrivate";
     }
     void init();
 };

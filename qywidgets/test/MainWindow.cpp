@@ -35,10 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ui.dial_test_middle, &QyAbstractController::setSliderPosition );
 
 
-    //ui.dial_test_middle->setDisabled(true);
     ui.dial_test_middle->setRemoteControlled(true);
 
-//    ui.dial_test_middle->setEnabled(false);
     ui.dial_test_big->setCaption("caption");
     ui.dial_test_big->setEmitSliderValue(true);
 
@@ -52,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QyBase::TransformExp2::setValueRange );
 
     ui.dial_test_big->setRange(20.0,20000.0);
-
+    ui.controller_mid_4->setDisabled(true);
     QObject::connect( ui.dial_test_big, &QyController::userEvent,
         this, &MainWindow::handleUserEvent );
 }

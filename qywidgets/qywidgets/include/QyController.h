@@ -77,8 +77,11 @@ public:
     QSize minimumSizeHint() const override;
 
 Q_SIGNALS:
-    // sent by middle mouse click (+ctrl,+shift) - alternative: KEY(delete?)
-    void userEvent(int,int);
+    // sent by middle mouse click and Key_Delete
+    // userEventValue is settable
+    // keyMod = 0..3 (shift=1, ctrl=2, shift+ctrl=3)
+    // TODO more options?
+    void userEvent(int userEventValue ,int keyMod);
 
 protected:
     void keyPressEvent(QKeyEvent *ev) override;

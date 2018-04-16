@@ -31,6 +31,10 @@ struct StyleData {
     static constexpr int minSizeForText = 20; // TODO test
     static constexpr int minMargin = 2;
 
+    static constexpr int normalStateColorAlpha = 255;
+    static constexpr int remoteStateColorAlpha = 128;
+    static constexpr int disableStateColorAlpha = 64;
+
     StyleData()
     : caption()
     , graphicStyle(Qy::GS_Rotary)
@@ -42,8 +46,6 @@ struct StyleData {
     , textColor(128,128,128,255)
     , leftColor(0,255,255,255)
     , rightColor(255,128,128,255)
-    , leftColorDisabled(0,255,255,128)
-    , rightColorDisabled(255,128,128,128)
     , graphicsRect()
     , valueTextRect()
     , captionTextRect()
@@ -65,14 +67,9 @@ struct StyleData {
         )
     {
         leftColor = leftc;
-        leftColorDisabled = leftc;
-        leftColor.setAlpha(enabledAlpha);
-        leftColorDisabled.setAlpha(disabledAlpha);
         rightColor = rightc;
-        rightColorDisabled = rightc;
-        rightColor.setAlpha(enabledAlpha);
-        rightColorDisabled.setAlpha(disabledAlpha);
     }
+
     QString                 caption;
 
     Qy::GraphicStyle        graphicStyle;
@@ -86,9 +83,6 @@ struct StyleData {
     QColor      textColor;
     QColor      leftColor;
     QColor      rightColor;
-    QColor      leftColorDisabled;
-    QColor      rightColorDisabled;
-    QColor      remoteColor;        // remote controlled state
 
     QRect       graphicsRect;
     QRect       valueTextRect;
@@ -102,8 +96,7 @@ struct StyleData {
     int         slotSize;
     int         arcBegin;
     int         painterWidth;
-
-    // int         stateLedValue; // TODO check
+    uint        stateLedValue; // TODO check usability
 
     union {
         uint flags;
@@ -113,6 +106,7 @@ struct StyleData {
             uint invertedFlow           : 1;    // chenaged max and min position
             uint controllerIndicator    : 1;    // controller with additional indicator
             uint pressed                : 1;    // needed ?
+            uint remoteControlled       : 1;
 
 //            uint hovered        : 1;    // needed ?
 //            uint clicked        : 1;    // needed ?
