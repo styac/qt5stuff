@@ -45,8 +45,8 @@ QyAbstractIndicatorPrivate::~QyAbstractIndicatorPrivate()
 void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator * thp )
 {
     QFontMetrics qFontMetrics(thp->font());
-    const int fontHeight = qFontMetrics.height();
-    const int captionHeight = styleData.caption.size() == 0 ? 0 : fontHeight + 4; // margin? ++ should even !
+    styleData.fontHeight = qFontMetrics.height();
+    const int captionHeight = styleData.caption.size() == 0 ? 0 : styleData.fontHeight + 4; // margin? ++ should even !
     const int width = thp->rect().width();
     const int height = thp->rect().height() - captionHeight;
     const int minDimension = qMin(width, height);
@@ -61,7 +61,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
 //        styleData.captionTextRect.setWidth(0);
         styleData.graphicsRect = thp->rect();
     }
-    qDebug() << "recalculateStyleData  fontHeight: " << fontHeight ;
+//    qDebug() << "recalculateStyleData  fontHeight: " << fontHeight ;
 
     styleData.painterWidth = qMax( int(StyleData::minPainterWidth),
         qMin( minDimension / StyleData::adjPainterWidth, int(StyleData::maxPainterWidth) ));
@@ -91,6 +91,9 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
             }
             styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,0 );
+            //
+            styleData.sizeHint.setHeight(styleData.graphicsRect.height() + captionHeight);
+            styleData.sizeHint.setWidth(styleData.graphicsRect.width() );
             // infoTextRect - one line under
         }
         break;
@@ -106,7 +109,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
             }
-            styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-fontHeight/2 );
+            styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-styleData.fontHeight/2 );
 
         }
         break;
@@ -163,6 +166,12 @@ QString const& QyAbstractIndicator::caption() const
     return d->styleData.caption;
 }
 
+QString const& QyAbstractIndicator::suffix(uint8_t index) const
+{
+    Q_D(const QyAbstractIndicator);
+    return d->valueVector.getSuffix(index);
+}
+
 void QyAbstractIndicator::setCaption(QString const& val)
 {
     Q_D(QyAbstractIndicator);
@@ -170,6 +179,16 @@ void QyAbstractIndicator::setCaption(QString const& val)
         return;
     }
     d->styleData.caption = val;
+    d->recalculateStyleData(this);
+    update();
+}
+
+void QyAbstractIndicator::setSuffix(QString const& val, uint8_t index )
+{
+    Q_D(QyAbstractIndicator);
+    if( ! d->valueVector.setSuffix(val, index) ) {
+        return;
+    }
     d->recalculateStyleData(this);
     update();
 }
@@ -210,13 +229,8 @@ double QyAbstractIndicator::maximum() const
 
 void QyAbstractIndicator::setSymmetric( bool val )
 {
-    constexpr int alphaEnabled = 255;
     Q_D(QyAbstractIndicator);
     if( d->indicatorTransformer.setSymmetric(val) ) {
-//        d->styleData.setColors( d->leftColor
-//            , val ? d->rightColor : this->palette().color(QPalette::Window).darker()
-//            , alphaEnabled
-//            , alphaEnabled );
         update();
     }
 }
@@ -296,6 +310,8 @@ void QyAbstractIndicator::setGraphicStyle(Qy::GraphicStyle val)
     }
     d->styleData.graphicStyle = val;
     d->recalculateStyleData(this);
+
+    // setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     update();
 }
 
@@ -375,6 +391,51 @@ bool QyAbstractIndicator::invertedFlow() const
 {
     Q_D( const QyAbstractIndicator);
     return d->styleData.invertedFlow;
+}
+
+void QyAbstractIndicator::setTextColor(QColor const& val)
+{
+    Q_D(QyAbstractIndicator);
+    if (d->styleData.textColor == val)
+        return;
+    d->styleData.textColor = val;
+    update();
+}
+
+void QyAbstractIndicator::setRightColor(QColor const& val)
+{
+    Q_D(QyAbstractIndicator);
+    if (d->styleData.rightColor == val)
+        return;
+    d->styleData.rightColor = val;
+    update();
+}
+
+void QyAbstractIndicator::setLeftColor(QColor const& val)
+{
+    Q_D(QyAbstractIndicator);
+    if (d->styleData.leftColor == val)
+        return;
+    d->styleData.leftColor = val;
+    update();
+}
+
+QColor const& QyAbstractIndicator::textColor() const
+{
+    Q_D( const QyAbstractIndicator);
+    return d->styleData.textColor;
+}
+
+QColor const& QyAbstractIndicator::rightColor() const
+{
+    Q_D( const QyAbstractIndicator);
+    return d->styleData.rightColor;
+}
+
+QColor const& QyAbstractIndicator::leftColor() const
+{
+    Q_D( const QyAbstractIndicator);
+    return d->styleData.leftColor;
 }
 
 QT_END_NAMESPACE

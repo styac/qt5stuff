@@ -51,8 +51,8 @@ struct StyleData {
     , captionTextRect()
     , infoTextRect()
     , margins()
-    , sizeHint()
-    , minimumSizeHint()
+    , sizeHint(100, 100)
+    , minimumSizeHint(50, 50)
     , slotSize(24*fracDegree)
     , arcBegin(270*fracDegree - slotSize)
     , painterWidth(2)
@@ -96,6 +96,7 @@ struct StyleData {
     int         slotSize;
     int         arcBegin;
     int         painterWidth;
+    int         fontHeight;
     uint        stateLedValue; // TODO check usability
 
     union {

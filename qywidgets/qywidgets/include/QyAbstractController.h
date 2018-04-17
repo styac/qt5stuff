@@ -41,6 +41,7 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_PROPERTY(int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
     Q_PROPERTY(Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType)
     Q_PROPERTY(int userEventValue READ userEventValue WRITE setUserEventValue)
+    Q_PROPERTY( QString suffix READ suffix WRITE setSuffix )
 
 public:
     ~QyAbstractController();
@@ -54,6 +55,7 @@ public:
     void setUserEventValue(int);
     void setValueId(int);
     void setValuePhysicalType(Qy::ValuePhysicalType);
+    void setSuffix(QString const&);
 
     void initTransformParameters( double p0, double p1);
     bool registerTransformFunctions(
@@ -78,6 +80,7 @@ public:
     int userEventValue() const;
     int valueId() const;
     Qy::ValuePhysicalType valuePhysicalType() const;
+    QString const& suffix() const;
 
 public Q_SLOTS:
     void setValue(double);

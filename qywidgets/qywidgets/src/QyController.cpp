@@ -165,14 +165,16 @@ void QyController::wheelEvent(QWheelEvent *e)
 
 QSize QyController::minimumSizeHint() const
 {
+    Q_D(const QyController);
     qDebug() << " ** minimumSizeHint";
-    return QSize(50, 50);
+    return d->styleData.minimumSizeHint;
 }
 
 QSize QyController::sizeHint() const
 {
+    Q_D(const QyController);
     qDebug() << " ** sizeHint" ;
-    return QSize(100, 100).expandedTo(QApplication::globalStrut());
+    return d->styleData.sizeHint; // QSize(100, 100).expandedTo(QApplication::globalStrut());
 }
 
 bool QyController::event(QEvent *e)

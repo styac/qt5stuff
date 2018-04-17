@@ -212,6 +212,16 @@ void QyAbstractController::setControllerIndicator(bool val)
     }
 }
 
+void QyAbstractController::setSuffix(QString const& val )
+{
+    QyAbstractIndicator::setSuffix(val,0);
+}
+
+QString const& QyAbstractController::suffix() const
+{
+    return QyAbstractIndicator::suffix(0);
+}
+
 void QyAbstractController::setRemoteControlled(bool val)
 {
     Q_D(QyAbstractController);

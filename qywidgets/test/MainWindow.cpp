@@ -35,14 +35,22 @@ MainWindow::MainWindow(QWidget *parent) :
         ui.dial_test_middle, &QyAbstractController::setSliderPosition );
 
 
+    ui.dial_test_middle->setSuffix("[mV]");
     ui.dial_test_middle->setRemoteControlled(true);
 
     ui.dial_test_big->setCaption("caption");
     ui.dial_test_big->setEmitSliderValue(true);
+    ui.dial_test_middle->setSuffix("[dB]");
 
     ui.dial_test_middle_sym->setSymmetric(true);
     ui.dial_test_middle_sym->setRange(-1000.0, 1000.0);
+    ui.dial_test_middle_sym->setSuffix("[%]");
 
+    ui.controller_mid_1->setSuffix("A [Hz]");
+    ui.controller_mid_2->setSuffix("B [Hz]");
+    ui.controller_mid_3->setSuffix("C [Hz]");
+    ui.controller_mid_4->setSuffix("D [Hz]");
+    ui.controller_mid_5->setSuffix("E [Hz]");
 
     ui.dial_test_big->registerTransformFunctions(
         QyBase::TransformExp2::slider2value,

@@ -71,6 +71,7 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     const auto palette = opt->palette;
     const auto width = opt->rect.width();
     const auto height = opt->rect.height();
+    int suffixDistance = opt->styleData->fontHeight*1.6;
     QColor leftColor(opt->styleData->leftColor);
     QColor rightColor(opt->styleData->rightColor);
 
@@ -133,6 +134,7 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
 // ----------------------------
     case Qy::GS_HalfRotary:
         {
+            suffixDistance = -suffixDistance;
             const int slotSize = opt->styleData->slotSize;
             const int arcBegin = opt->styleData->arcBegin;
             QRect rect( opt->styleData->graphicsRect );
@@ -169,6 +171,9 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     int textAlign = Qt::AlignHCenter | Qt::AlignVCenter;
     p->setPen(text);
     p->drawText(textRect,textAlign,opt->valueDisplay->getValueString(0)); //
+
+    // preliminary
+    p->drawText(textRect.adjusted(0,suffixDistance,0,0),textAlign,opt->valueDisplay->getSuffix(0)); //
     p->restore();
 }
 

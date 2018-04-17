@@ -25,6 +25,7 @@
 
 #include <QtWidgets/qwidget.h>
 #include <QtWidgets/qframe.h>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,10 +45,9 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
     Q_PROPERTY( Qy::TextBoxPlacement textBoxPlacement READ textBoxPlacement WRITE setTextBoxPlacement)
     Q_PROPERTY( Qy::ColorStyle colorStyle READ colorStyle WRITE setColorStyle)
     Q_PROPERTY( QString caption READ caption WRITE setCaption)
-
-//    Q_PROPERTY( Qt::QColor valueTextColor READ valueTextColor WRITE setValueTextColor)
-//    Q_PROPERTY( Qt::QColor rightColor READ rightColor WRITE setRightColor )
-//    Q_PROPERTY( Qt::QColor leftColor READ leftColor WRITE setLeftColor )
+    Q_PROPERTY( QColor textColor READ textColor WRITE setTextColor)
+    Q_PROPERTY( QColor rightColor READ rightColor WRITE setRightColor )
+    Q_PROPERTY( QColor leftColor READ leftColor WRITE setLeftColor )
 
 public:
     ~QyAbstractIndicator();
@@ -60,6 +60,7 @@ public:
             QyBase::TransfomerParameters::FpSetMinMax setValueRange );
 
     void setCaption(QString const&);
+    void setSuffix(QString const&, uint8_t);
     void setMinimum(double);
     void setMaximum(double);
     void setSymmetric(bool);
@@ -71,7 +72,12 @@ public:
     void setOrientation(Qt::Orientation);
     void setSequenceOrientation(Qt::Orientation);
 
+    void setTextColor(QColor const&);
+    void setRightColor(QColor const&);
+    void setLeftColor(QColor const&);
+
     QString const& caption() const;
+    QString const& suffix( uint8_t ) const;
     bool symmetric() const;
     bool mirrored() const;
     bool invertedFlow() const;
@@ -83,6 +89,10 @@ public:
     Qy::GraphicStyle graphicStyle() const;
     Qy::TextBoxPlacement textBoxPlacement() const;
     Qy::ColorStyle colorStyle() const;
+
+    QColor const& textColor() const;
+    QColor const& rightColor() const;
+    QColor const& leftColor() const;
 
 public Q_SLOTS:
     void setValue(double,int);

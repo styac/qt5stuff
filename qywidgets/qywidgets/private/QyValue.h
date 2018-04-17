@@ -33,15 +33,6 @@ struct Value
     ,   sliderValue(-1000)
     {}
 
-    inline void setPrefix( const QString& val )
-    {
-        prefix = val + " ";
-    }
-
-//    inline void setSuffix( const QString& val )
-//    {
-//        suffix = " " + val ;
-//    }
 
     inline int32_t getPaintValue( uint16_t paintValueRange ) const
     {
@@ -50,8 +41,7 @@ struct Value
 
     double  value;
     QString valueString;
-    QString prefix;
-//    QString suffix;
+    QString suffix;
     int32_t sliderValue;
 };
 
@@ -60,7 +50,7 @@ class ValueVector {
 public:
     ValueVector()
     : decimalPlaces(4)
-    {        
+    {
         setSize(1);
     }
     inline uint16_t getSize() const
@@ -77,7 +67,7 @@ public:
             v.value = 0.0;
             v.valueString = "0";
             v.sliderValue = 0;
-            v.prefix.clear();
+            v.suffix.clear();
 //            v.suffix.clear();
         }
         return vv.size();
@@ -118,6 +108,20 @@ public:
     inline int32_t getPaintValue( uint16_t paintValueRange, uint8_t index ) const
     {
         return vv[index].getPaintValue(paintValueRange);
+    }
+
+    inline bool setSuffix( const QString& val, uint8_t index )
+    {
+        if( vv[index].suffix == val ) {
+            return false;
+        }
+        vv[index].suffix = val;
+        return true;
+    }
+
+    inline const QString& getSuffix( uint8_t index ) const
+    {
+        return vv[index].suffix;
     }
 
     QVector<Value> vv;
