@@ -89,8 +89,8 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>400</y>
+      <x>0</x>
+      <y>290</y>
       <width>526</width>
       <height>102</height>
      </rect>
@@ -124,6 +124,35 @@
       <widget class="QyController" name="controller_mid_5"/>
      </item>
     </layout>
+   </widget>
+   <widget class="QWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>430</y>
+      <width>401</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <widget class="QyController" name="controller">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>10</y>
+       <width>331</width>
+       <height>100</height>
+      </rect>
+     </property>
+     <property name="graphicStyle">
+      <enum>Qy::GS_HalfRotary</enum>
+     </property>
+     <property name="caption">
+      <string>asdkaslkdjaslkdjaslkdja</string>
+     </property>
+     <property name="suffix">
+      <string>km/h</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

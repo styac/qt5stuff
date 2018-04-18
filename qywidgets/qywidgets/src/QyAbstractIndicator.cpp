@@ -50,7 +50,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
     const int width = thp->rect().width();
     const int height = thp->rect().height() - captionHeight;
     const int minDimension = qMin(width, height);
-    const int diffDimension = (width - height)/2;
+    int diffDimension = (width - height)/2;
     if( captionHeight ) {
         styleData.captionTextRect.setHeight(captionHeight);
         styleData.captionTextRect.setWidth(width);
@@ -104,13 +104,14 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
             styleData.arcBegin = 180*styleData.fracDegree;
             // box optimize, text align
             if( diffDimension > 0) {
-                styleData.graphicsRect.adjust(diffDimension + margin, margin, -diffDimension - margin, -margin);
+            // recalculate
+                styleData.graphicsRect.adjust(diffDimension + margin -height/2, margin, -diffDimension - margin+height/2, -margin+height);
+                styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-styleData.fontHeight );
             } else {
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
+                styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-styleData.fontHeight/2 );
             }
-            styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-styleData.fontHeight/2 );
-
         }
         break;
     case Qy::GS_Triangle:

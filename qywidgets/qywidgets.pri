@@ -26,7 +26,7 @@ QMAKE_CXXFLAGS_RELEASE += -O2
 QT_PREF = /usr/include/qt5
 QT_VER = 5.6.2
 
-INCLUDEPATH +=\
+INCLUDEPATH += \
     /usr/include/c++/7 \
     /usr/include/c++/7/x86_64-suse-linux \
     /usr/lib64/gcc/x86_64-suse-linux/7/include \
@@ -50,7 +50,7 @@ SOURCES += \
     qywidgets/src/QyColors.cpp \
     qywidgets/src/QyTransfomerParameters.cpp \
     qywidgets/src/QyValueTransfomer.cpp \
-    $$PWD/qywidgets/src/QyClipboard.cpp
+    qywidgets/src/QyClipboard.cpp
 
 HEADERS += \
     qywidgets/private/QyController_p.h \
@@ -72,6 +72,6 @@ HEADERS += \
     qywidgets/include/QyConsts.h \
     qywidgets/include/QyTransfomerParameters.h \
     qywidgets/include/QyGlobal.h \
-    $$PWD/qywidgets/include/QyWidgetVector.h \
-    $$PWD/qywidgets/include/QyClipboard.h
+    qywidgets/include/QyWidgetVector.h \
+    qywidgets/include/QyClipboard.h
 

@@ -83,14 +83,9 @@ void QyAbstractControllerPrivate::setSteps(int single, int page)
 QyAbstractController::QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent)
     : QyAbstractIndicator(dd, parent)
 {
-    // TODO cleanup -- style data
-    constexpr int alphaEnabled = 255;
-    constexpr int alphaDisabled = 64;
     Q_D(QyAbstractController);
     setSymmetric(false);
-    d->styleData.setColors( d->leftColor, this->palette().color(QPalette::Window).darker(),
-        alphaEnabled, alphaDisabled );
-
+    d->styleData.setColors( d->leftColor, this->palette().color(QPalette::Window).darker() );
 }
 
 QyAbstractController::~QyAbstractController()

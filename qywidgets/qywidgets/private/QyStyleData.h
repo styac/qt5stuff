@@ -60,11 +60,7 @@ struct StyleData {
     {
     }
 
-    void setColors( const QColor& leftc
-        , const QColor& rightc
-        , int enabledAlpha
-        , int disabledAlpha
-        )
+    void setColors( const QColor& leftc, const QColor& rightc )
     {
         leftColor = leftc;
         rightColor = rightc;
