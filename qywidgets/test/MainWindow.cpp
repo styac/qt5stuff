@@ -19,8 +19,12 @@
 #include "MainWindow.h"
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+
+MainWindow::MainWindow(QWidget *parent)
+: QMainWindow(parent)
+, pt()
+, controllerVectorGrid()
+//, controllerVectorBox(4,QBoxLayout::LeftToRight,pt)
 {
     ui.setupUi(this);
     QObject::connect( ui.dial_test_middle, &QyAbstractController::valueChanged,
@@ -61,13 +65,43 @@ MainWindow::MainWindow(QWidget *parent) :
     ui.controller_mid_4->setDisabled(true);
     QObject::connect( ui.dial_test_big, &QyController::userEvent,
         this, &MainWindow::handleUserEvent );
+
+    pt = new QWidget(ui.centralWidget);
+    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,pt);
+    QSize wsize(80,100);
+    QSize vecsize = controllerVectorGrid->applySize(wsize);
+    controllerVectorGrid->applyId(0,0);
+    pt->setGeometry(530,290,vecsize.width(),vecsize.height());
+    auto&  tpgrid = controllerVectorGrid->widgets();
+//    auto const&  tpgbox = controllerVectorBox.widgets();
+
+
+    QObject::connect( tpgrid[0], &QyController::userEvent,
+        this, &MainWindow::handleUserEvent0 );
+
+    tpgrid[0]->setEmitSliderValue(true);
+    QObject::connect( tpgrid[0], &QyController::sliderPositionChanged,
+        tpgrid[3], &QyController::setSliderPosition );
+
 }
 
-void MainWindow::handleUserEvent(int val,int kmods)
+void MainWindow::handleUserEvent(int kmods, bool ct, bool sw, int val)
 {
-    qDebug() << "++++++ handleUserEvent " << val << " kmods " << kmods;
+    qDebug() << "++++++ handleUserEvent " << val
+        << " ct " << ct
+        << " sw " << sw
+        <<  " kmods " << kmods;
 }
 
+void MainWindow::handleUserEvent0(int kmods, bool ct, bool sw, int val)
+{
+    qDebug() << "++++++ handleUserEvent0 " << val
+        << " ct " << ct
+        << " sw " << sw
+        <<  " kmods " << kmods;
+    controllerVectorGrid->widgets()[3]->setRemoteControlled(ct);
+    controllerVectorGrid->widgets()[3]->setInvertSetSliderPos(sw);
+}
 
 void MainWindow::changedValueMiddle(double val, int valueId)
 {

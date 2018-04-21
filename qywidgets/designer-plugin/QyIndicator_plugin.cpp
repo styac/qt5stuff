@@ -33,6 +33,15 @@ QString QyIndicator_plugin::domXml() const
 {
     return "<ui language=\"c++\">\n"
            " <widget class=\"QyIndicator\" name=\"indicator\">\n"
+           "  <property name=\"geometry\">\n"
+           "   <rect>\n"
+           "    <x>0</x>\n"
+           "    <y>0</y>\n"
+           "    <width>200</width>\n"
+           "    <height>200</height>\n"
+           "   </rect>\n"
+           "  </property>\n"
+
 //           "  <property name=\"toolTip\" >\n"
 //           "   <string>indicator widget</string>\n"
 //           "  </property>\n"

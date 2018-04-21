@@ -48,10 +48,15 @@ public:
         uint flags;
         struct
         {
-            uint emitSliderValue    : 1;
-            uint invertSliderValue  : 1;
-            uint pressed            : 1;
-            uint remoteControlled   : 1; // in styleData
+            uint emitSliderValue        : 1;
+            uint invertSetSliderPos     : 1;
+            uint invertEmitSliderPos    : 1;
+            uint pressed                : 1;
+            uint remoteControlled       : 1; // in styleData
+
+            // parameter onoff
+            uint switchCtrl             : 1;
+            uint switchShift            : 1;
         };
     };
 };

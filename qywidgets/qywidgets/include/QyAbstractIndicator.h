@@ -31,6 +31,9 @@ QT_BEGIN_NAMESPACE
 
 class QyAbstractIndicatorPrivate;
 
+// TODO override disable,enable widget and set alpha
+//  remove alpha setting from painter
+
 class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
 {
     Q_OBJECT
@@ -50,8 +53,6 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
     Q_PROPERTY( QColor leftColor READ leftColor WRITE setLeftColor )
 
 public:
-    ~QyAbstractIndicator();
-
     void initTransformParameters( double p0, double p1 );
 
     bool registerTransformFunctions(
@@ -100,6 +101,7 @@ public Q_SLOTS:
 
 protected:
     QyAbstractIndicator(QyAbstractIndicatorPrivate &dd, QWidget *parent = nullptr);
+    ~QyAbstractIndicator();
 
 private:
     Q_DISABLE_COPY(QyAbstractIndicator)

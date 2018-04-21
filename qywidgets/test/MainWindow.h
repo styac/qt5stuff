@@ -18,6 +18,7 @@
  */
 
 #include "ui_MainWindow.h"
+#include "QyWidgetVector.h"
 
 class MainWindow : public QMainWindow
 {
@@ -29,8 +30,14 @@ public:
 public slots:
     void changedValueMiddle(double val, int valueId);
     void changedValueBig(double val, int valueId);
-    void handleUserEvent(int val, int kmods);
+    void handleUserEvent(int kmods, bool ct, bool sw, int val);
+    void handleUserEvent0(int kmods, bool ct, bool sw, int val);
 
 private:
     Ui::MainWindow ui;
+    QWidget *pt;
+    QyWidgetVectorGrid<QyController>    * controllerVectorGrid;
+//    QyWidgetVector<QyController,QGridLayout>    controllerVectorGrid;
+//    QyWidgetVector<QyController,QBoxLayout>     controllerVectorBox;
+
 };

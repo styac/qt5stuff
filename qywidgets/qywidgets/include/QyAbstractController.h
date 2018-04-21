@@ -30,8 +30,11 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_OBJECT
     Q_PROPERTY(bool symmetric READ symmetric WRITE setSymmetric)
     Q_PROPERTY(bool emitSliderValue READ emitSliderValue WRITE setEmitSliderValue)
-    Q_PROPERTY(bool invertSliderValue READ invertSliderValue WRITE setInvertSliderValue)
+    Q_PROPERTY(bool invertSetSliderPos READ invertSetSliderPos WRITE setInvertSetSliderPos)
+    Q_PROPERTY(bool invertEmitSliderPos READ invertEmitSliderPos WRITE setInvertEmitSliderPos)
     Q_PROPERTY(bool remoteControlled READ remoteControlled WRITE setRemoteControlled)
+//    Q_PROPERTY(bool switchCtrl READ switchCtrl WRITE setSwitchCtrl)
+//    Q_PROPERTY(bool switchShift READ switchShift WRITE setSwitchShift)
     Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
     Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
@@ -39,13 +42,11 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_PROPERTY(int singleStep READ singleStep WRITE setSingleStep)
     Q_PROPERTY(int pageStep READ pageStep WRITE setPageStep)
     Q_PROPERTY(int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
-    Q_PROPERTY(Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType)
     Q_PROPERTY(int userEventValue READ userEventValue WRITE setUserEventValue)
+    Q_PROPERTY(Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType)
     Q_PROPERTY( QString suffix READ suffix WRITE setSuffix )
 
 public:
-    ~QyAbstractController();
-
     void setSymmetric(bool);
     void setControllerIndicator(bool);
     void setMinimum(double);
@@ -67,7 +68,8 @@ public:
     bool symmetric() const;
     bool controllerIndicator() const;
     bool emitSliderValue() const;
-    bool invertSliderValue() const;
+    bool invertSetSliderPos() const;
+    bool invertEmitSliderPos() const;
     bool remoteControlled() const;
     double minimum() const;
     double maximum() const;
@@ -87,7 +89,8 @@ public Q_SLOTS:
     void setSliderPosition(int);
     void setRange(double min, double max);
     void setEmitSliderValue(bool);
-    void setInvertSliderValue(bool);
+    void setInvertSetSliderPos(bool);
+    void setInvertEmitSliderPos(bool);
     void setRemoteControlled(bool);
 
 Q_SIGNALS:
@@ -96,6 +99,7 @@ Q_SIGNALS:
     void rangeChanged(int min, int max);
 
 protected:
+    ~QyAbstractController();
     QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent = nullptr);
     void valueToClipboardFormat( QString& res );
     bool valueFromClipboardFormat( const QString& res );

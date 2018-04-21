@@ -75,6 +75,7 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     QColor leftColor(opt->styleData->leftColor);
     QColor rightColor(opt->styleData->rightColor);
 
+    // TODO remove this > override disable,enable
     if( !(opt->state & QStyle::State_Enabled) ) {
         leftColor.setAlpha( opt->styleData->disableStateColorAlpha );
         rightColor.setAlpha( opt->styleData->disableStateColorAlpha );

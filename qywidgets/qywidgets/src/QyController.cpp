@@ -93,7 +93,7 @@ void QyController::mouseDoubleClickEvent(QMouseEvent * e)
     emit valueChanged( d->controllerTransformer.getValue(0), d->valueId);
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
-        emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
+        emit sliderPositionChanged( d->invertEmitSliderPos ? QyBase::maximumSlider - sliderValue : sliderValue );
     }
 }
 
@@ -104,8 +104,14 @@ void QyController::mousePressEvent(QMouseEvent * e)
     if( e->button() == Qt::MiddleButton ) {
         e->accept();
         auto kMods = QGuiApplication::keyboardModifiers();
-        int keyModsInt = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
-        emit userEvent( d->userEventValue, keyModsInt );
+        int opc = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
+        if( kMods & Qt::ShiftModifier ) {
+            d->switchShift ^= 1;
+        }
+        if( kMods & Qt::ControlModifier ) {
+            d->switchCtrl ^= 1;
+        }
+        emit userEvent( opc, d->switchCtrl, d->switchShift,  d->userEventValue );
         return;
     }
 
@@ -152,7 +158,7 @@ void QyController::mouseMoveEvent(QMouseEvent * e)
         emit valueChanged( d->controllerTransformer.getValue(0), d->valueId);
         if( d->emitSliderValue ) {
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
-            emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
+            emit sliderPositionChanged( d->invertEmitSliderPos ? QyBase::maximumSlider - sliderValue : sliderValue );
         }
     }
 }
@@ -204,29 +210,21 @@ void QyController::keyPressEvent(QKeyEvent *ev)
     auto key = ev->key();
     Q_D(QyAbstractController);
 
-    // any character with SHIFT A..Z as userEvent
-
-// alternative mouse?
-//    if( kMods == Qt::ShiftModifier ) {
-//        if(( key >= Qt::Key_A ) && (key <= Qt::Key_Z )) {
-//            if( ev->isAutoRepeat() ) {
-//                return; // do not send repeated events
-//            }
-//            emit userEvent( d->userEventValue, key );
-//            return;
-//        }
-//    }
-
     switch( key ) {
-        case Qt::Key_Delete:
+        case Qt::Key_Insert:
         if( ev->isAutoRepeat() ) {
             return; // do not send repeated events
         }
-        int keyModsInt = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
-        emit userEvent( d->userEventValue, keyModsInt );
+        int opc = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
+        if( kMods & Qt::ShiftModifier ) {
+            d->switchShift ^= 1;
+        }
+        if( kMods & Qt::ControlModifier ) {
+            d->switchCtrl ^= 1;
+        }
+        emit userEvent( opc, d->switchCtrl, d->switchShift,  d->userEventValue );
         return;
     }
-
 
 #if QyClipboard_use==1
     if(( kMods & Qt::ControlModifier ) && ( key == Qt::Key_C )) {
@@ -332,7 +330,7 @@ void QyController::keyPressEvent(QKeyEvent *ev)
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
         // TODO check if thie ok
-        emit sliderPositionChanged( d->invertSliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
+        emit sliderPositionChanged( d->invertEmitSliderPos ? QyBase::maximumSlider - sliderValue : sliderValue );
     }
 }
 

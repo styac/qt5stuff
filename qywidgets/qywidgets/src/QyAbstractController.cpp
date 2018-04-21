@@ -35,6 +35,7 @@ QyAbstractControllerPrivate::QyAbstractControllerPrivate()
     , lastPosition(0)
     , userEventValue(0)
     , remoteControlledColorAlpha(128)
+    , valuePhysicalType(Qy::VPT_Number)
     , flags(0)
 {
 }
@@ -187,10 +188,6 @@ void QyAbstractController::setSymmetric( bool val )
     constexpr int alphaDisabled = 64;
     Q_D(QyAbstractController);
     if( d->controllerTransformer.setSymmetric(val) ) {
-//        d->styleData.setColors( d->leftColor
-//            , val ? d->rightColor : this->palette().color(QPalette::Window).darker()
-//            , alphaEnabled
-//            , alphaDisabled );
         d->controllerTransformer.reset(0);
         update();
     }
@@ -223,14 +220,6 @@ void QyAbstractController::setRemoteControlled(bool val)
     if( d->remoteControlled != val ) {
         d->remoteControlled = val;
         d->styleData.remoteControlled = val;
-//        // TODO set color  remoteControlledColor
-//        if( val ) {
-//            d->styleData.leftColor.setAlpha(d->remoteControlledColorAlpha);
-//            d->styleData.rightColor.setAlpha(d->remoteControlledColorAlpha);
-//        } else {
-//            d->styleData.leftColor.setAlpha(255);
-//            d->styleData.rightColor.setAlpha(255);
-//        }
         update();
     }
 }
@@ -291,10 +280,16 @@ int QyAbstractController::sliderPosition() const
 void QyAbstractController::setSliderPosition(int val)
 {
     Q_D(QyAbstractController);
-    if( d->controllerTransformer.setSliderValue(val,0) ) {
+    // only if remote controlled
+    if( ! d->remoteControlled ) {
+        return;
+    }
+
+    const auto invert = d->invertSetSliderPos;
+    const auto sliderVal = invert ? QyBase::maximumSlider - val : val;
+    if( d->controllerTransformer.setSliderValue(sliderVal,0) ) {
         if( d->emitSliderValue ) {
-            const auto invert = d->invertSliderValue;
-            emit sliderPositionChanged( invert ? QyBase::maximumSlider - val : val );
+            emit sliderPositionChanged( sliderVal );
         }
         emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
         update();
@@ -307,10 +302,16 @@ bool QyAbstractController::emitSliderValue() const
     return d->emitSliderValue;
 }
 
-bool QyAbstractController::invertSliderValue() const
+bool QyAbstractController::invertSetSliderPos() const
 {
     Q_D( const QyAbstractController);
-    return d->invertSliderValue;
+    return d->invertSetSliderPos;
+}
+
+bool QyAbstractController::invertEmitSliderPos() const
+{
+    Q_D( const QyAbstractController);
+    return d->invertEmitSliderPos;
 }
 
 int QyAbstractController::valueId() const
@@ -331,25 +332,36 @@ void QyAbstractController::setEmitSliderValue(bool val)
     if( d->emitSliderValue != val ) {
         d->emitSliderValue = val;
         if( val ) {
-            const auto invert = d->invertSliderValue;
+            const auto invert = d->invertSetSliderPos;
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
             emit sliderPositionChanged( invert ? QyBase::maximumSlider - sliderValue : sliderValue );
         }
     }
 }
 
-void QyAbstractController::setInvertSliderValue(bool val)
+void QyAbstractController::setInvertSetSliderPos(bool val)
 {
     Q_D(QyAbstractController);
-    if( d->invertSliderValue != val ) {
-        d->invertSliderValue = val;
+    if( d->invertSetSliderPos != val ) {
+        d->invertSetSliderPos = val;
+        // refresh pos
+        // update();
+    }
+}
+
+void QyAbstractController::setInvertEmitSliderPos(bool val)
+{
+    Q_D(QyAbstractController);
+    if( d->invertEmitSliderPos != val ) {
+        d->invertEmitSliderPos = val;
         if( d->emitSliderValue ) {
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
             emit sliderPositionChanged( val ? QyBase::maximumSlider - sliderValue : sliderValue );
         }
+        // refresh pos
+        // update();
     }
 }
-
 
 void QyAbstractController::initTransformParameters( double p0, double p1 )
 {
@@ -365,7 +377,6 @@ bool QyAbstractController::registerTransformFunctions(
     Q_D(QyAbstractController);
     return d->controllerTransformer.registerTransformFunctions(slider2value, value2slider, setValueRange);
 }
-
 
 void QyAbstractController::valueToClipboardFormat( QString& res )
 {

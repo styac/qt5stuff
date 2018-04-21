@@ -80,8 +80,8 @@ Q_SIGNALS:
     // sent by middle mouse click and Key_Delete
     // userEventValue is settable
     // keyMod = 0..3 (shift=1, ctrl=2, shift+ctrl=3)
-    // TODO more options?
-    void userEvent(int userEventValue ,int keyMod);
+    // onoff - every 2nd for all 4 cases
+    void userEvent( int opcode, bool switchCtrl, bool switchShift, int userEventValue );
 
 protected:
     void keyPressEvent(QKeyEvent *ev) override;

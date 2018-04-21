@@ -91,10 +91,10 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
             }
             styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,0 );
-            //
+            // to test
             styleData.sizeHint.setHeight(styleData.graphicsRect.height() + captionHeight);
             styleData.sizeHint.setWidth(styleData.graphicsRect.width() );
-            // infoTextRect - one line under
+            // messageTextRect - one line under
         }
         break;
     case Qy::GS_HalfRotary:
@@ -102,15 +102,22 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
             // handle orientation, mirroring,...
             styleData.slotSize = 90*styleData.fracDegree;
             styleData.arcBegin = 180*styleData.fracDegree;
-            // box optimize, text align
             if( diffDimension > 0) {
-            // recalculate
-                styleData.graphicsRect.adjust(diffDimension + margin -height/2, margin, -diffDimension - margin+height/2, -margin+height);
+                // to test
+                styleData.sizeHint.setHeight(styleData.graphicsRect.height() + captionHeight);
+                styleData.sizeHint.setWidth(styleData.graphicsRect.width() );
+                int corr = height/2 - margin*2;
+                styleData.graphicsRect.adjust(diffDimension + margin -corr, margin, -diffDimension - margin + corr, - margin + corr*2);
                 styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-styleData.fontHeight );
+                // messageTextRect - one line under
             } else {
                 styleData.graphicsRect.setBottom(minDimension);
                 styleData.graphicsRect.adjust(margin,margin,-margin,-margin);
                 styleData.valueTextRect = styleData.graphicsRect.adjusted( 0,0,0,-styleData.fontHeight/2 );
+                // to test
+                styleData.sizeHint.setHeight(styleData.graphicsRect.height() + captionHeight);
+                styleData.sizeHint.setWidth(styleData.graphicsRect.width() );
+                // messageTextRect - one line under
             }
         }
         break;

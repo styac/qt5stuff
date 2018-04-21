@@ -93,7 +93,17 @@ struct StyleData {
     int         arcBegin;
     int         painterWidth;
     int         fontHeight;
-    uint        stateLedValue; // TODO check usability
+    // 0 = off
+    // 1 = red
+    // 2 = orange
+    // 3 = yellow
+    // 4 = green
+    // 5 = turqouise
+    // 6 = blue
+    // 7 = white
+    // TODO property, display
+    uint8_t     stateLeftLedValue; // TODO check usability
+    uint8_t     stateRightLedValue; // TODO check usability
 
     union {
         uint flags;
@@ -103,7 +113,7 @@ struct StyleData {
             uint invertedFlow           : 1;    // chenaged max and min position
             uint controllerIndicator    : 1;    // controller with additional indicator
             uint pressed                : 1;    // needed ?
-            uint remoteControlled       : 1;
+            uint remoteControlled       : 1;// TODO remove
 
 //            uint hovered        : 1;    // needed ?
 //            uint clicked        : 1;    // needed ?

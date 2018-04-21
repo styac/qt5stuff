@@ -73,5 +73,6 @@ HEADERS += \
     qywidgets/include/QyTransfomerParameters.h \
     qywidgets/include/QyGlobal.h \
     qywidgets/include/QyWidgetVector.h \
-    qywidgets/include/QyClipboard.h
+    qywidgets/include/QyClipboard.h \
+    qywidgets/include/QyWidgetVector.h
 
