@@ -19,6 +19,7 @@
 
 #include "ui_MainWindow.h"
 #include "QyWidgetVector.h"
+#include "QyIndicator.h"
 
 class MainWindow : public QMainWindow
 {
@@ -36,7 +37,8 @@ public slots:
 private:
     Ui::MainWindow ui;
     QWidget *pt;
-    QyWidgetVectorGrid<QyController>    * controllerVectorGrid;
+    QyWidgetVectorGrid<QyController> * controllerVectorGrid;
+    QyWidgetVectorGrid<QyIndicator>  * controllerVectorGridIndicator;
 //    QyWidgetVector<QyController,QGridLayout>    controllerVectorGrid;
 //    QyWidgetVector<QyController,QBoxLayout>     controllerVectorBox;
 

@@ -23,16 +23,16 @@
 #include <QGridLayout>
 #include <QBoxLayout>
 
-
 QT_BEGIN_NAMESPACE
 
 // DOESN'T DELETE THE WIDGETS
 
-// need a external widget>
-// window->setLayout(layout);
+typedef QVector<QString> StringVectorType;
+
 template< class WidgetType, class LayoutType >
 class QyWidgetVector {
 public:
+    // widgets are owned by parent (always needs a parent)
    ~QyWidgetVector()
     {
         delete l;
@@ -65,11 +65,11 @@ public:
         }
         int margin = 8; // TODO get margin
         if( y == 0 ) {
-            thisSize.setWidth(s.width()+margin);
+            thisSize.setWidth(s.width()+margin+rowLabelWidth);
         } else {
-            thisSize.setWidth(y*s.width()+margin);
+            thisSize.setWidth(y*s.width()+margin+rowLabelWidth);
         }
-        thisSize.setHeight(x*s.height()+margin);
+        thisSize.setHeight(x*s.height()+margin+colLabelHeight);
         return thisSize;
     }
 
@@ -83,10 +83,10 @@ public:
         if( rowSequence || (y==0) ) {
             for( auto& v : wv ) {
 
-                // TEST BEGIN
-                QString cap( QString("%0").arg(idv) );
-                v->setCaption( cap );
-                // TEST END
+//                // TEST BEGIN
+//                QString cap( QString("%0").arg(idv) );
+//                v->setCaption( cap );
+//                // TEST END
 
 
                 v->setUserEventValue(ide++);
@@ -102,21 +102,29 @@ public:
         }
     }
 
+    //  apply captions
+    //  apply suffix
+    //  ...
+
 protected:
     QyWidgetVector() = delete;
-    inline QyWidgetVector( int xp, int yp )//, QWidget *parent )
-    :   wv()
-    ,   l()
-    ,   thisSize()
-    ,   x(xp==0 ? 1 : xp)
-    ,   y(yp)
+    inline QyWidgetVector( uint16_t xp, uint16_t yp )
+    : wv()
+    , l()
+    , thisSize()
+    , colLabelHeight(0)
+    , rowLabelWidth(0)
+    ,   x(xp==0 ? 1 : xp) // x cannot be 0
+    ,   y(yp)   // if y is zero then it is not grid
     {}
 
     QVector<WidgetType *>   wv;
     LayoutType            * l;
     QSize                   thisSize;
-    const int x;
-    const int y;
+    int                     colLabelHeight;
+    int                     rowLabelWidth;
+    const uint16_t          x;
+    const uint16_t          y;
 };
 
 template< class WidgetType >
@@ -125,7 +133,7 @@ public:
     using LayoutType = QGridLayout;
     using ParentType = QyWidgetVector<WidgetType, LayoutType>;
     QyWidgetVectorGrid() = delete;
-    inline QyWidgetVectorGrid( uint32_t xp, uint32_t yp, QWidget *parent )
+    inline QyWidgetVectorGrid( uint16_t xp, uint16_t yp, const StringVectorType *colLabels, const StringVectorType *rowLabels, QWidget *parent )
     : ParentType(xp,yp)
     {
         ParentType::l = new LayoutType();
@@ -135,9 +143,47 @@ public:
         if( yp == 0 ) {
             yp = 1;
         }
-        for( uint32_t xi = 0; xi < xp; ++ xi ) {
-            for( uint32_t yi = 0; yi < yp; ++ yi ) {
-                WidgetType * w = new WidgetType( parent );
+        uint16_t x0 = 0;
+        uint16_t y0 = 0;
+        bool useRowLabels = false;
+        bool useColLabels = false;
+        if(( colLabels != nullptr ) && ( colLabels->size() >= yp )) {
+            useColLabels = true;
+        }
+        if(( rowLabels != nullptr ) && ( rowLabels->size() >= xp )) {
+            useRowLabels = true;
+            ++y0;
+            ++yp;
+        }
+        if( useColLabels ) {
+            ++x0;
+            ++xp;
+            uint16_t labi = 0;
+            for( uint16_t yi = y0; yi < yp; ++yi, ++labi ) {
+                auto * w = new QLabel( colLabels->value(labi), parent );
+                w->setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
+                ParentType::l->addWidget(w,0,yi);
+                if( ParentType::colLabelHeight < w->height() ) {
+                    ParentType::colLabelHeight = w->height();
+                }
+            }
+        }
+
+        if( useRowLabels ) {
+            uint16_t labi = 0;
+            for( uint16_t xi = x0; xi < xp; ++xi, ++labi ) {
+                auto * w = new QLabel( rowLabels->value(labi), parent );
+                w->setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
+                ParentType::l->addWidget(w,xi,0);
+                if( ParentType::rowLabelWidth < w->width() ) {
+                    ParentType::rowLabelWidth = w->width();
+                }
+            }
+        }
+
+        for( uint16_t xi = x0; xi < xp; ++ xi ) {
+            for( uint16_t yi = y0; yi < yp; ++ yi ) {
+                auto * w = new WidgetType( parent );
                 ParentType::wv.push_back(w);
                 ParentType::l->addWidget(w,xi,yi);
             }
@@ -152,7 +198,7 @@ public:
     using LayoutType = QBoxLayout;
     using ParentType = QyWidgetVector<WidgetType, LayoutType>;
     QyWidgetVectorBox() = delete;
-    inline QyWidgetVectorBox( uint32_t xp, LayoutType::Direction direction, QWidget *parent )
+    inline QyWidgetVectorBox( uint16_t xp, LayoutType::Direction direction, QWidget *parent )
     : ParentType(xp,0)
     {
         ParentType::l = new LayoutType(direction);
@@ -160,7 +206,7 @@ public:
             xp = 1;
         }
 
-        for( uint32_t xi = 0; xi < xp; ++ xi ) {
+        for( uint16_t xi = 0; xi < xp; ++ xi ) {
             WidgetType * w = new WidgetType( parent );
             ParentType::wv.push_back(w);
             ParentType::l->addWidget(w,xi);

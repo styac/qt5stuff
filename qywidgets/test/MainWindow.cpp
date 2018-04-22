@@ -17,6 +17,7 @@
  */
 
 #include "MainWindow.h"
+
 #include <QDebug>
 
 
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
 , pt()
 , controllerVectorGrid()
+, controllerVectorGridIndicator()
 //, controllerVectorBox(4,QBoxLayout::LeftToRight,pt)
 {
     ui.setupUi(this);
@@ -67,7 +69,21 @@ MainWindow::MainWindow(QWidget *parent)
         this, &MainWindow::handleUserEvent );
 
     pt = new QWidget(ui.centralWidget);
-    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,pt);
+
+    StringVectorType colLabels;
+    StringVectorType rowLabels;
+
+    colLabels.push_back("col0");
+    colLabels.push_back("col1");
+    colLabels.push_back("col2");
+
+    rowLabels.push_back("row0");
+    rowLabels.push_back("row1");
+
+// not implemented yet
+//    controllerVectorGridIndicator = new QyWidgetVectorGrid<QyIndicator>(2,3,pt,&colLabels,&rowLabels);
+
+    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,&colLabels,&rowLabels,pt);
     QSize wsize(80,100);
     QSize vecsize = controllerVectorGrid->applySize(wsize);
     controllerVectorGrid->applyId(0,0);
