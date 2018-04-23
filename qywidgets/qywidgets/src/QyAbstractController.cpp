@@ -176,6 +176,19 @@ int QyAbstractController::userEventValue() const
     return d->userEventValue;
 }
 
+
+bool QyAbstractController::switchCtrl() const
+{
+    Q_D(const QyAbstractController);
+    return d->switchCtrl;
+}
+
+bool QyAbstractController::switchShift() const
+{
+    Q_D(const QyAbstractController);
+    return d->switchShift;
+}
+
 Qy::ValuePhysicalType QyAbstractController::valuePhysicalType() const
 {
     Q_D(const QyAbstractController);
@@ -184,13 +197,23 @@ Qy::ValuePhysicalType QyAbstractController::valuePhysicalType() const
 
 void QyAbstractController::setSymmetric( bool val )
 {
-    constexpr int alphaEnabled = 255;
-    constexpr int alphaDisabled = 64;
     Q_D(QyAbstractController);
     if( d->controllerTransformer.setSymmetric(val) ) {
         d->controllerTransformer.reset(0);
         update();
     }
+}
+
+void QyAbstractController::setSwitchCtrl(bool val)
+{
+    Q_D(QyAbstractController);
+    d->switchCtrl = val;
+}
+
+void QyAbstractController::setSwitchShift(bool val)
+{
+    Q_D(QyAbstractController);
+    d->switchShift = val;
 }
 
 void QyAbstractController::setControllerIndicator(bool val)

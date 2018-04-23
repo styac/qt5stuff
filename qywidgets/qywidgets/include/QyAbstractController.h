@@ -33,8 +33,8 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
     Q_PROPERTY(bool invertSetSliderPos READ invertSetSliderPos WRITE setInvertSetSliderPos)
     Q_PROPERTY(bool invertEmitSliderPos READ invertEmitSliderPos WRITE setInvertEmitSliderPos)
     Q_PROPERTY(bool remoteControlled READ remoteControlled WRITE setRemoteControlled)
-//    Q_PROPERTY(bool switchCtrl READ switchCtrl WRITE setSwitchCtrl)
-//    Q_PROPERTY(bool switchShift READ switchShift WRITE setSwitchShift)
+    Q_PROPERTY(bool switchCtrl READ switchCtrl WRITE setSwitchCtrl)
+    Q_PROPERTY(bool switchShift READ switchShift WRITE setSwitchShift)
     Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
     Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
@@ -48,6 +48,8 @@ class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicato
 
 public:
     void setSymmetric(bool);
+    void setSwitchCtrl(bool);
+    void setSwitchShift(bool);
     void setControllerIndicator(bool);
     void setMinimum(double);
     void setMaximum(double);
@@ -66,6 +68,8 @@ public:
 
     Qt::Orientation orientation() const;
     bool symmetric() const;
+    bool switchCtrl() const;
+    bool switchShift() const;
     bool controllerIndicator() const;
     bool emitSliderValue() const;
     bool invertSetSliderPos() const;

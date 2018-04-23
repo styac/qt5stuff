@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
 // not implemented yet
 //    controllerVectorGridIndicator = new QyWidgetVectorGrid<QyIndicator>(2,3,pt,&colLabels,&rowLabels);
 
-    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,&colLabels,&rowLabels,pt);
+    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,false,"objname",&colLabels,&rowLabels,pt);
     QSize wsize(80,100);
     QSize vecsize = controllerVectorGrid->applySize(wsize);
     controllerVectorGrid->applyId(0,0);
@@ -98,7 +98,6 @@ MainWindow::MainWindow(QWidget *parent)
     tpgrid[0]->setEmitSliderValue(true);
     QObject::connect( tpgrid[0], &QyController::sliderPositionChanged,
         tpgrid[3], &QyController::setSliderPosition );
-
 }
 
 void MainWindow::handleUserEvent(int kmods, bool ct, bool sw, int val)

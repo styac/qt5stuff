@@ -42,6 +42,37 @@ QyAbstractIndicatorPrivate::~QyAbstractIndicatorPrivate()
 {
 }
 
+#if 0
+
+http://doc.qt.io/qt-5/layout.html
+
+
+Custom Widgets in Layouts
+
+When you make your own widget class, you should also communicate its layout properties.
+If the widget uses one of Qt's layouts, this is already taken care of.
+
+If the widget does not have any child widgets, or uses manual layout,
+you can change the behavior of the widget using any or all of the following mechanisms:
+
+
+    Reimplement QWidget::sizeHint() to return the preferred size of the widget.
+    Reimplement QWidget::minimumSizeHint() to return the smallest size the widget can have.
+    Call QWidget::setSizePolicy() to specify the space requirements of the widget.
+
+Call QWidget::updateGeometry() whenever the size hint, minimum size hint or size policy changes. This will cause a layout recalculation. Multiple consecutive calls to QWidget::updateGeometry() will only cause one layout recalculation.
+
+If the preferred height of your widget depends on its actual width
+(e.g., a label with automatic word-breaking), set the height-for-width flag in the widget's size
+policy and reimplement QWidget::heightForWidth().
+
+
+Even if you implement QWidget::heightForWidth(), it is still a good idea to provide a reasonable sizeHint().
+
+For further guidance when implementing these functions, see the Qt Quarterly article Trading Height for Width.
+#endif
+
+
 void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator * thp )
 {
     QFontMetrics qFontMetrics(thp->font());
