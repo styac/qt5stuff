@@ -68,7 +68,6 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect( ui.dial_test_big, &QyController::userEvent,
         this, &MainWindow::handleUserEvent );
 
-    pt = new QWidget(ui.centralWidget);
 
     StringVectorType colLabels;
     StringVectorType rowLabels;
@@ -80,24 +79,27 @@ MainWindow::MainWindow(QWidget *parent)
     rowLabels.push_back("row0");
     rowLabels.push_back("row1");
 
-// not implemented yet
-//    controllerVectorGridIndicator = new QyWidgetVectorGrid<QyIndicator>(2,3,pt,&colLabels,&rowLabels);
+    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,false,"objname",&rowLabels, &colLabels);
+    pt = new QWidget(ui.centralWidget);
+    pt->setLayout( controllerVectorGrid->layout() );
 
-    controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,false,"objname",&colLabels,&rowLabels,pt);
     QSize wsize(80,100);
     QSize vecsize = controllerVectorGrid->applySize(wsize);
     controllerVectorGrid->applyId(0,0);
     pt->setGeometry(530,290,vecsize.width(),vecsize.height());
+
     auto&  tpgrid = controllerVectorGrid->widgets();
-//    auto const&  tpgbox = controllerVectorBox.widgets();
-
-
     QObject::connect( tpgrid[0], &QyController::userEvent,
         this, &MainWindow::handleUserEvent0 );
 
     tpgrid[0]->setEmitSliderValue(true);
     QObject::connect( tpgrid[0], &QyController::sliderPositionChanged,
         tpgrid[3], &QyController::setSliderPosition );
+
+//    auto const&  tpgbox = controllerVectorBox.widgets();
+
+
+
 }
 
 void MainWindow::handleUserEvent(int kmods, bool ct, bool sw, int val)

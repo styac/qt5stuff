@@ -31,7 +31,6 @@ typedef QVector<QString> StringVectorType;
 template< class WidgetType, class LayoutType >
 class QyWidgetVector {
 public:
-    // widgets are owned by parent (always needs a parent)
    ~QyWidgetVector()
     {
         delete l;
@@ -62,13 +61,10 @@ public:
         for( auto& v : wv ) {
             v->setFixedSize(s);
         }
-        int margin = 8; // TODO get margin
-        if( y == 0 ) {
-            thisSize.setWidth(s.width()+margin+rowLabelWidth);
-        } else {
-            thisSize.setWidth(y*s.width()+margin+rowLabelWidth);
-        }
-        thisSize.setHeight(x*s.height()+margin+colLabelHeight);
+        thisSize = wv[0]->size();
+        int margin = 12; // TODO get margin
+        thisSize.setHeight( row * thisSize.height() + margin + colLabelHeight );
+        thisSize.setWidth(( col > 0 ? col : 1 ) * thisSize.width() + margin + rowLabelWidth );
         return thisSize;
     }
 
@@ -79,18 +75,16 @@ public:
 
     inline void applyId( int idv, int ide, bool rowSequence = true )
     {
-        if( rowSequence || (y==0) ) {
+        if( rowSequence || (col==0) ) {
             for( auto& v : wv ) {
 
-                // TEST BEGIN
-                QString cap( QString("%0").arg(idv) );
-                v->setCaption( cap );
-                // TEST END
-
+//                // TEST BEGIN
+//                QString cap( QString("%0").arg(idv) );
+//                v->setCaption( cap );
+//                // TEST END
 
                 v->setUserEventValue(ide++);
                 v->setValueId(idv++);
-
             }
             return;
         }
@@ -107,14 +101,15 @@ public:
 
 protected:
     QyWidgetVector() = delete;
-    QyWidgetVector( uint16_t xp, uint16_t yp )
+    QyWidgetVector( uint16_t rowp, uint16_t colp )
     : wv()
     , l()
     , thisSize()
     , colLabelHeight(0)
     , rowLabelWidth(0)
-    ,   x(xp==0 ? 1 : xp) // x cannot be 0
-    ,   y(yp)   // if y is zero then it is not grid
+    , row(rowp==0 ? 1 : rowp) // x cannot be 0
+    , col(colp)   // if y is zero then it is not grid
+    , flags(0)
     {}
 
     QVector<WidgetType *>   wv;
@@ -122,8 +117,15 @@ protected:
     QSize                   thisSize;
     int                     colLabelHeight;
     int                     rowLabelWidth;
-    const uint16_t          x;
-    const uint16_t          y;
+    const uint16_t          row;
+    const uint16_t          col;
+    union {
+        uint16_t            flags;
+        struct {
+            uint16_t useRowLabels : 1;
+            uint16_t useColLabels : 1;
+        };
+    };
 };
 
 template< class WidgetType >
@@ -132,105 +134,107 @@ public:
     using LayoutType = QGridLayout;
     using BaseType = QyWidgetVector<WidgetType, LayoutType>;
     QyWidgetVectorGrid() = delete;
-    QyWidgetVectorGrid( uint16_t xp, uint16_t yp, bool colMajor,
-            const QString& objectNameBase,
-            /* const QString *mainCaption, */
-            const StringVectorType *colLabels, const StringVectorType *rowLabels,
-            QWidget *parent )
-    : BaseType(xp,yp)
+    QyWidgetVectorGrid( uint16_t rowp, uint16_t colp, bool colMajor, const QString& objectNameBase,
+            const StringVectorType *rowLabels, const StringVectorType *colLabels )
+    : BaseType(rowp,colp)
     {
         BaseType::l = new LayoutType();
-        if( xp == 0 ) {
-            xp = 1;
+        if( rowp == 0 ) {
+            rowp = 1;
         }
-        if( yp == 0 ) {
-            yp = 1;
+        if( colp == 0 ) {
+            colp = 1;
         }
-        uint16_t x0 = 0;
-        uint16_t y0 = 0;
-        bool useRowLabels = false;
-        bool useColLabels = false;
-        if(( colLabels != nullptr ) && ( colLabels->size() >= yp )) {
-            useColLabels = true;
+        uint16_t row0 = 0;
+        uint16_t col0 = 0;
+        if(( colLabels != nullptr ) && ( colLabels->size() >= colp )) {
+            BaseType::useColLabels = true;
         }
-        if(( rowLabels != nullptr ) && ( rowLabels->size() >= xp )) {
-            useRowLabels = true;
-            ++y0;
-            ++yp;
+        if(( rowLabels != nullptr ) && ( rowLabels->size() >= rowp )) {
+            BaseType::useRowLabels = true;
+            ++col0;
+            ++colp;
         }
-        if( useColLabels ) {
-            ++x0;
-            ++xp;
+        if( BaseType::useColLabels ) {
+            ++row0;
+            ++rowp;
             uint16_t labi = 0;
-            for( uint16_t yi = y0; yi < yp; ++yi, ++labi ) {
-                auto * w = new QLabel( colLabels->value(labi), parent );
+            for( uint16_t col = col0; col < colp; ++col, ++labi ) {
+                auto * w = new QLabel( colLabels->value(labi) );
                 w->setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
-                BaseType::l->addWidget(w,0,yi);
+                w->setObjectName(QString("%0_colLabel_%1").arg( objectNameBase ).arg(labi));
+                w->setWordWrap(true);
+                w->adjustSize();
+                BaseType::l->addWidget(w,0,col);
                 if( BaseType::colLabelHeight < w->height() ) {
                     BaseType::colLabelHeight = w->height();
                 }
             }
         }
 
-        if( useRowLabels ) {
+        if( BaseType::useRowLabels ) {
             uint16_t labi = 0;
-            for( uint16_t xi = x0; xi < xp; ++xi, ++labi ) {
-                auto * w = new QLabel( rowLabels->value(labi), parent );
+            for( uint16_t row = row0; row < rowp; ++row, ++labi ) {
+                auto * w = new QLabel( rowLabels->value(labi) );
                 w->setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
-                BaseType::l->addWidget(w,xi,0);
+                w->setObjectName(QString("%0_rowLabel_%1").arg( objectNameBase ).arg(labi));
+                w->setWordWrap(true);
+                w->adjustSize();
+                BaseType::l->addWidget(w,row,0);
                 if( BaseType::rowLabelWidth < w->width() ) {
                     BaseType::rowLabelWidth = w->width();
                 }
             }
         }
 
+        uint16_t obni = 0;
         if( colMajor ) {
-            uint16_t obni = 0;
-            for( uint16_t yi = y0; yi < yp; ++ yi ) {
-                for( uint16_t xi = x0; xi < xp; ++ xi, ++obni ) {
-                    auto * w = new WidgetType( parent );
+            for( uint16_t col = col0; col < colp; ++col ) {
+                for( uint16_t row = row0; row < rowp; ++row, ++obni ) {
+                    auto * w = new WidgetType();
                     w->setObjectName(QString("%0_%1").arg( objectNameBase ).arg(obni));
                     // setAccessibleName(const QString &name)
                     BaseType::wv.push_back(w);
-                    BaseType::l->addWidget(w,xi,yi);
+                    BaseType::l->addWidget(w,row,col);
                 }
             }
         } else {
-            uint16_t obni = 0;
-            for( uint16_t xi = x0; xi < xp; ++ xi ) {
-                for( uint16_t yi = y0; yi < yp; ++ yi, ++obni ) {
-                    auto * w = new WidgetType( parent );
+            for( uint16_t row = row0; row < rowp; ++row ) {
+                for( uint16_t col = col0; col < colp; ++col, ++obni ) {
+                    auto * w = new WidgetType();
                     w->setObjectName(QString("%0_%1").arg( objectNameBase ).arg(obni));
                     // setAccessibleName(const QString &name)
                     BaseType::wv.push_back(w);
-                    BaseType::l->addWidget(w,xi,yi);
+                    BaseType::l->addWidget(w,row,col);
                 }
             }
         }
-        parent->setLayout(BaseType::l);
     }
 };
 
+// TODO adapt changes
 template< class WidgetType >
 class QyWidgetVectorBox : public QyWidgetVector<WidgetType, QBoxLayout> {
 public:
     using LayoutType = QBoxLayout;
     using BaseType = QyWidgetVector<WidgetType, LayoutType>;
     QyWidgetVectorBox() = delete;
-    QyWidgetVectorBox( uint16_t xp, LayoutType::Direction direction, QWidget *parent )
-    : BaseType(xp,0)
+    QyWidgetVectorBox( uint16_t rowp, LayoutType::Direction direction,
+        const QString& objectNameBase,
+        const StringVectorType *rowLabels
+    )
+    : BaseType(rowp,0)
     {
         BaseType::l = new LayoutType(direction);
-        if( xp == 0 ) {
-            xp = 1;
+        if( rowp == 0 ) {
+            rowp = 1;
         }
 
-        for( uint16_t xi = 0; xi < xp; ++ xi ) {
-            WidgetType * w = new WidgetType( parent );
+        for( uint16_t xi = 0; xi < rowp; ++ xi ) {
+            WidgetType * w = new WidgetType();
             BaseType::wv.push_back(w);
             BaseType::l->addWidget(w,xi);
         }
-        parent->setLayout(BaseType::l);
     }
 };
 
