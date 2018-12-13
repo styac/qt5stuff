@@ -26,31 +26,50 @@ class QYWIDGET_LIBSHARED_EXPORT Qy : private QWidget {
     Q_OBJECT
 
 public:
-    enum GraphicStyle : uint8_t {
+// TODO rename GraphicStyleIndicator
+    enum GraphicStyleIndicator : uint8_t {
         // single controller, display, multidisplay
         // controller   = vv[0]
-        GS_NoGraphics,          // selects Qy_AutoDisplay
-        GS_Slider,              // classic line
-        GS_Rotary,               // classic circle
-        GS_HalfRotary,           // half circle
-        GS_Triangle,            // typical volume control
-        GS_RoundLed,
-        GS_SquareLed,
+        GSI_NoGraphics,          // selects Qy_AutoDisplay
+        GSI_Slider,              // classic line
+        GSI_Rotary,               // classic circle
+        GSI_HalfRotary,           // half circle
+        GSI_Triangle,            // typical volume control
+        GSI_RoundLed,
+        GSI_SquareLed,
 
 
-//        GS_TwinSlider   = 0x10,
-//        GS_TwinHalfGauge,
-//        GS_ConcentricGauge,
-//        GS_ConcentricHalfGauge,
+//        GSI_TwinSlider   = 0x10,
+//        GSI_TwinHalfGauge,
+//        GSI_ConcentricGauge,
+//        GSI_ConcentricHalfGauge,
 
-//        GS_GaugeLed     = 0x20,
-//        GS_HalfGaugeLed,
-//        GS_SliderLed,
+//        GSI_GaugeLed     = 0x20,
+//        GSI_HalfGaugeLed,
+//        GSI_SliderLed,
 
-        GS_MAX
+        GSI_MAX
     };
 
-    Q_ENUM(GraphicStyle);
+    Q_ENUM(GraphicStyleIndicator);
+
+    enum GraphicStyleButton : uint8_t {
+        GSB_SquareFull,
+        GSB_SquareFramed,
+        GSB_RoundFull,
+        GSB_RoundFramed,
+        GSB_RectFullHorizontal,
+        GSB_RectFramedHorizontal,
+        GSB_RectShiftHorizontal,
+        GSB_RectFullVertical,
+        GSB_RectFramedVertical,
+        GSB_RectShiftVertical,
+
+
+        GSB_MAX,
+    };
+
+    Q_ENUM(GraphicStyleButton);
 
     enum TextBoxPlacement : uint8_t  {
         TB_NoTextBox,

@@ -26,18 +26,33 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_WIDGETS_EXPORT QyStyleOption : public QStyleOptionComplex
+class Q_WIDGETS_EXPORT QyStyleOptionIndicator : public QStyleOptionComplex
 {
 public:
     enum StyleOptionType { Type = SO_ComplexCustomBase + 1 };
     enum StyleOptionVersion { Version = 1 };
     const QyBase::ValueVector   * valueDisplay;
-    const StyleData             * styleData;
-    QyStyleOption();
-    QyStyleOption(const QyStyleOption &other) : QStyleOptionComplex(Version, Type) { *this = other; }
+    const StyleDataIndicator    * styleData;
+    QyStyleOptionIndicator();
+    QyStyleOptionIndicator(const QyStyleOptionIndicator &other) : QStyleOptionComplex(Version, Type) { *this = other; }
 
 protected:
-    QyStyleOption(int version);
+    QyStyleOptionIndicator(int version);
+};
+
+
+class Q_WIDGETS_EXPORT QyStyleOptionButton : public QStyleOptionComplex
+{
+public:
+    enum StyleOptionType { Type = SO_ComplexCustomBase + 2 };
+    enum StyleOptionVersion { Version = 1 };
+    QyStyleOptionButton();
+    QyStyleOptionButton(const QyStyleOptionButton &other) : QStyleOptionComplex(Version, Type) { *this = other; }
+
+    const StyleDataButton     * styleData;
+
+protected:
+    QyStyleOptionButton(int version);
 };
 
 QT_END_NAMESPACE

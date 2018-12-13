@@ -19,3 +19,5 @@ HEADERS += \
 
 FORMS += \
     test/MainWindow.ui
+
+

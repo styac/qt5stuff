@@ -18,8 +18,6 @@
 
 #include "QyClipboard.h"
 
-#if QyClipboard_use==1
-
 #include <QClipboard>
 #include <QApplication>
 
@@ -38,5 +36,3 @@ void copy( const QString& text )
 }
 
 } // end namespace QyClipboard
-
-#endif

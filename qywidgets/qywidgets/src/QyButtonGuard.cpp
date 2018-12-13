@@ -16,28 +16,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyStyleOption.h"
+#include "QyButtonGuard.h"
 
 QT_BEGIN_NAMESPACE
 
-QyStyleOptionIndicator::QyStyleOptionIndicator()
-    : QStyleOptionComplex(Version, SO_Slider)
+QyButtonGuard::QyButtonGuard( QWidget *parent)
+: toggledlast(-1)
+, maxId(0)
 {
 }
 
-QyStyleOptionIndicator::QyStyleOptionIndicator(int version)
-    : QStyleOptionComplex(version, SO_Slider)
+QyButtonGuard::~QyButtonGuard()
 {
 }
 
-QyStyleOptionButton::QyStyleOptionButton()
-    : QStyleOptionComplex(Version, SO_Slider)
+void QyButtonGuard::toggled( int id, int groupIndex )
 {
-}
-
-QyStyleOptionButton::QyStyleOptionButton(int version)
-    : QStyleOptionComplex(version, SO_Slider)
-{
+    if( groupIndex == toggledlast ) {
+        return;
+    }
+    if( (groupIndex < 0 ) || ( groupIndex >= maxId ) ) {
+        return;
+    }
+    if( toggledlast < 0 ) {
+        toggledlast = groupIndex;
+        return;
+    }
+    if( notifyToggled( id, groupIndex ) ) {
+        toggledlast = groupIndex;
+    }
 }
 
 QT_END_NAMESPACE
+

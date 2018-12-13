@@ -1,4 +1,5 @@
 #pragma once
+
 /*
  * Copyright (C) 2018 Istvan Simon -- stevens37 at gmail dot com
  *
@@ -17,31 +18,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "ui_MainWindow.h"
-#include "QyWidgetVectorSpec.h"
+#include "QyAbstractButton_p.h"
 #include "QyButton.h"
 
-class MainWindow : public QMainWindow
+QT_BEGIN_NAMESPACE
+
+class QyButtonPrivate : public QyAbstractButtonPrivate
 {
-    Q_OBJECT
+    Q_DECLARE_PUBLIC(QyButton)
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-
-public slots:
-    void changedValueMiddle(double val, int valueId);
-    void changedValueBig(double val, int valueId);
-    void controlClicked(int kmods, bool ct, bool sw, int val, int goupIndex);
-    void controlClicked0(int kmods, bool ct, bool sw, int val, int goupIndex);
-
-private:
-    Ui::MainWindow ui;
-    QWidget *pt;
-    QyControllerVectorGrid * controllerVectorGrid;
-    QyWidgetVectorGrid<QyIndicator>  * controllerVectorGridIndicator;
-//    QyWidgetVector<QyController,QGridLayout>    controllerVectorGrid;
-//    QyWidgetVector<QyController,QBoxLayout>     controllerVectorBox;
-
-    QyButton button;
-
+    QyButtonPrivate();
+    ~QyButtonPrivate();
 };
+
+QT_END_NAMESPACE
+
+

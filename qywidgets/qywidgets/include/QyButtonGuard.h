@@ -1,4 +1,5 @@
 #pragma once
+
 /*
  * Copyright (C) 2018 Istvan Simon -- stevens37 at gmail dot com
  *
@@ -17,31 +18,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "ui_MainWindow.h"
-#include "QyWidgetVectorSpec.h"
-#include "QyButton.h"
+#include "QyAbstractButton.h"
 
-class MainWindow : public QMainWindow
+QT_BEGIN_NAMESPACE
+
+class QYWIDGET_LIBSHARED_EXPORT QyButtonGuard : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit QyButtonGuard( QWidget *parent = nullptr );
+    ~QyButtonGuard();
 
-public slots:
-    void changedValueMiddle(double val, int valueId);
-    void changedValueBig(double val, int valueId);
-    void controlClicked(int kmods, bool ct, bool sw, int val, int goupIndex);
-    void controlClicked0(int kmods, bool ct, bool sw, int val, int goupIndex);
+public Q_SLOTS:
+    void toggled( int id, int groupIndex );
 
-private:
-    Ui::MainWindow ui;
-    QWidget *pt;
-    QyControllerVectorGrid * controllerVectorGrid;
-    QyWidgetVectorGrid<QyIndicator>  * controllerVectorGridIndicator;
-//    QyWidgetVector<QyController,QGridLayout>    controllerVectorGrid;
-//    QyWidgetVector<QyController,QBoxLayout>     controllerVectorBox;
-
-    QyButton button;
-
+protected:
+    virtual bool notifyToggled( int id, int groupIndex ) = 0;
+    int toggledlast;
+    int maxId;
 };
+
+QT_END_NAMESPACE
+

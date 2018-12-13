@@ -1,4 +1,5 @@
 #pragma once
+
 /*
  * Copyright (C) 2018 Istvan Simon -- stevens37 at gmail dot com
  *
@@ -17,31 +18,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "ui_MainWindow.h"
-#include "QyWidgetVectorSpec.h"
-#include "QyButton.h"
+// QT_BEGIN_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+struct QyExtraState {
+    QyExtraState()
+    : flags(0)
+    {}
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-
-public slots:
-    void changedValueMiddle(double val, int valueId);
-    void changedValueBig(double val, int valueId);
-    void controlClicked(int kmods, bool ct, bool sw, int val, int goupIndex);
-    void controlClicked0(int kmods, bool ct, bool sw, int val, int goupIndex);
-
-private:
-    Ui::MainWindow ui;
-    QWidget *pt;
-    QyControllerVectorGrid * controllerVectorGrid;
-    QyWidgetVectorGrid<QyIndicator>  * controllerVectorGridIndicator;
-//    QyWidgetVector<QyController,QGridLayout>    controllerVectorGrid;
-//    QyWidgetVector<QyController,QBoxLayout>     controllerVectorBox;
-
-    QyButton button;
-
+    union {
+        uint8_t flags;
+        struct
+        {
+            uint8_t remoteControlled    : 1;
+            uint8_t s0                  : 1;
+            uint8_t s1                  : 1;
+        };
+    };
 };
+
+
+// QT_END_NAMESPACE
+

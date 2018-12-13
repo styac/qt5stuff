@@ -40,27 +40,13 @@
 #include <private/qmath_p.h>
 #include <private/qstyle_p.h>
 
-#if 0
-resize
-
-class FontAdjustingButton : public QPushButton {
-public:
-  explicit FontAdjustingButton(QWidget *parent = NULL) : QPushButton(parent) {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  }
-protected:
-  void resizeEvent(QResizeEvent *event) {
-    int button_margin = style()->pixelMetric(QStyle::PM_ButtonMargin);
-    QFont f = font();
-    f.setPixelSize(event->size().height() - button_margin * 2);
-    setFont(f);
-  }
-};
-#endif
 
 QT_BEGIN_NAMESPACE
 
-void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
+// TODO refactor : value from this not from QyStyleOption
+// void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p,  )
+
+void drawQyMinimalStyle( const QyStyleOptionIndicator *opt, QPainter *p )
 {
     constexpr int fracDegree = 16;     // 5760 (16 * 360).
     constexpr int circleFracDegree = fracDegree * 360;
@@ -72,16 +58,16 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     const auto width = opt->rect.width();
     const auto height = opt->rect.height();
     int suffixDistance = opt->styleData->fontHeight*1.6;
-    QColor leftColor(opt->styleData->leftColor);
-    QColor rightColor(opt->styleData->rightColor);
+    QColor stateOnColor(opt->styleData->stateOnColor);
+    QColor stateOffColor(opt->styleData->stateOffColor);
 
     // TODO remove this > override disable,enable
     if( !(opt->state & QStyle::State_Enabled) ) {
-        leftColor.setAlpha( opt->styleData->disableStateColorAlpha );
-        rightColor.setAlpha( opt->styleData->disableStateColorAlpha );
+        stateOnColor.setAlpha( opt->styleData->disableStateColorAlpha );
+        stateOffColor.setAlpha( opt->styleData->disableStateColorAlpha );
     } else if( opt->styleData->remoteControlled ) {
-        leftColor.setAlpha( opt->styleData->remoteStateColorAlpha );
-        rightColor.setAlpha( opt->styleData->remoteStateColorAlpha );
+        stateOnColor.setAlpha( opt->styleData->remoteStateColorAlpha );
+        stateOffColor.setAlpha( opt->styleData->remoteStateColorAlpha );
     }
 
     const int squareSize = qMin(width, height);
@@ -104,10 +90,10 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
     }
 
     switch( opt->styleData->graphicStyle ) {
-    case Qy::GS_NoGraphics:
+    case Qy::GSI_NoGraphics:
         break;
 // ----------------------------
-    case Qy::GS_Rotary:
+    case Qy::GSI_Rotary:
         {
             const int slotSize = opt->styleData->slotSize;
             const int arcBegin = opt->styleData->arcBegin;
@@ -115,9 +101,9 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
             int fullArc = circleFracDegree - 2*slotSize; //opt->slotSize; -- not needed
             int valDeg = -opt->valueDisplay->getPaintValue(fullArc,0);
             p->setRenderHint(QPainter::Antialiasing);
-            QPen leftPen( leftColor );
+            QPen leftPen( stateOnColor );
             leftPen.setWidth(painterWidth);
-            QPen rightPen( rightColor );
+            QPen rightPen( stateOffColor );
             rightPen.setWidth(painterWidth);
 
             p->setPen( rightPen );
@@ -133,7 +119,7 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
         break;
 
 // ----------------------------
-    case Qy::GS_HalfRotary:
+    case Qy::GSI_HalfRotary:
         {
             suffixDistance = -suffixDistance;
             const int slotSize = opt->styleData->slotSize;
@@ -142,14 +128,14 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
             int fullArc = circleFracDegree - 2*slotSize; //opt->slotSize; -- not needed
             int valDeg = -opt->valueDisplay->getPaintValue(fullArc,0);
             p->setRenderHint(QPainter::Antialiasing);
-            QPen leftPen( leftColor );
-            leftPen.setWidth(painterWidth);
-            QPen rightPen( rightColor );
-            rightPen.setWidth(painterWidth);
+            QPen onPen( stateOnColor );
+            onPen.setWidth(painterWidth);
+            QPen offPen( stateOffColor );
+            offPen.setWidth(painterWidth);
 
-            p->setPen( rightPen );
+            p->setPen( offPen );
             p->drawArc(rect, arcBegin+valDeg, -fullArc-valDeg);
-            p->setPen( leftPen );
+            p->setPen( onPen );
             p->drawArc(rect, arcBegin, valDeg);
 
             if( textBoxPlacement == Qy::TB_NoTextBox ) {
@@ -159,7 +145,7 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
         }
         break;
 // ----------------------------
-//    case QyStyleOptionController::GS_Slider:
+//    case QyStyleOptionController::GSI_Slider:
 //        {
         //  QPainter::drawLine(int x1, int y1, int x2, int y2)
 //        }
@@ -175,6 +161,41 @@ void drawQyMinimalStyle( const QyStyleOption *opt, QPainter *p )
 
     // preliminary
     p->drawText(textRect.adjusted(0,suffixDistance,0,0),textAlign,opt->valueDisplay->getSuffix(0)); //
+    p->restore();
+}
+
+
+void drawQyMinimalStyle( const QyStyleOptionButton *opt, QPainter *p )
+{
+    const auto width = opt->rect.width();
+    const auto height = opt->rect.height();
+    QPen statePen( opt->styleData->stateColor );
+
+    p->save();
+    switch( opt->styleData->graphicStyle ) {
+    case Qy::GSB_SquareFull:
+
+        break;
+    case Qy::GSB_SquareFramed:
+        break;
+    case Qy::GSB_RoundFull:
+        break;
+    case Qy::GSB_RoundFramed:
+        break;
+    case Qy::GSB_RectFullHorizontal:
+        break;
+    case Qy::GSB_RectFramedHorizontal:
+        break;
+    case Qy::GSB_RectShiftHorizontal:
+        break;
+    case Qy::GSB_RectFullVertical:
+        break;
+    case Qy::GSB_RectFramedVertical:
+        break;
+    case Qy::GSB_RectShiftVertical:
+        break;
+    }
+
     p->restore();
 }
 

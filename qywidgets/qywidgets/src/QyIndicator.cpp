@@ -22,7 +22,7 @@
 
 QT_BEGIN_NAMESPACE
 
-void drawQyMinimalStyle( const QyStyleOption *option, QPainter *p );
+void drawQyMinimalStyle( const QyStyleOptionIndicator *option, QPainter *p );
 
 
 void QyIndicatorPrivate::init()
@@ -31,7 +31,7 @@ void QyIndicatorPrivate::init()
     q->setFocusPolicy(Qt::WheelFocus);
 }
 
-void QyIndicator::initStyleOption( QyStyleOption *option) const
+void QyIndicator::initStyleOption( QyStyleOptionIndicator *option) const
 {
     if (!option)
         return;
@@ -48,6 +48,14 @@ QyIndicator::QyIndicator(QWidget *parent)
     d->init();
 }
 
+QyIndicator::QyIndicator( int groupIndex, QWidget *parent )
+    : QyAbstractIndicator(*new QyIndicatorPrivate, parent)
+{
+    Q_D(QyIndicator);
+    d->init();
+    d->groupIndex = groupIndex;
+}
+
 QyIndicator::~QyIndicator()
 {
 }
@@ -60,7 +68,7 @@ void QyIndicator::resizeEvent(QResizeEvent *e)
 void QyIndicator::paintEvent(QPaintEvent * e)
 {
     QPainter p(this);
-    QyStyleOption option;
+    QyStyleOptionIndicator option;
     initStyleOption(&option);
     drawQyMinimalStyle(&option, &p);
 //    qDebug() << " ** paintEvent: " << e ;

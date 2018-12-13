@@ -20,19 +20,21 @@
 
 #include <QDebug>
 
-
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
 , pt()
 , controllerVectorGrid()
 , controllerVectorGridIndicator()
+, button(parent)
 //, controllerVectorBox(4,QBoxLayout::LeftToRight,pt)
 {
     ui.setupUi(this);
+
+
     QObject::connect( ui.dial_test_middle, &QyAbstractController::valueChanged,
         this, &MainWindow::changedValueMiddle );
 
-    ui.dial_test_middle_sym->setValueId(1);
+    ui.dial_test_middle_sym->setId(1);
     QObject::connect( ui.dial_test_middle_sym, &QyAbstractController::valueChanged,
         this, &MainWindow::changedValueMiddle );
 
@@ -65,19 +67,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui.dial_test_big->setRange(20.0,20000.0);
     ui.controller_mid_4->setDisabled(true);
-    QObject::connect( ui.dial_test_big, &QyController::userEvent,
-        this, &MainWindow::handleUserEvent );
+    QObject::connect( ui.dial_test_big, &QyController::controlClicked,
+        this, &MainWindow::controlClicked );
 
 
     StringVectorType colLabels;
     StringVectorType rowLabels;
 
     colLabels.push_back("col0");
-    colLabels.push_back("col1");
-    colLabels.push_back("col2");
+    colLabels.push_back("col111");
+    colLabels.push_back("col222222");
 
     rowLabels.push_back("row0");
-    rowLabels.push_back("row1");
+    rowLabels.push_back("row1111");
 
     controllerVectorGrid = new QyWidgetVectorGrid<QyController>(2,3,false,"objname",&rowLabels, &colLabels);
     pt = new QWidget(ui.centralWidget);
@@ -89,8 +91,19 @@ MainWindow::MainWindow(QWidget *parent)
     pt->setGeometry(530,290,vecsize.width(),vecsize.height());
 
     auto&  tpgrid = controllerVectorGrid->widgets();
-    QObject::connect( tpgrid[0], &QyController::userEvent,
-        this, &MainWindow::handleUserEvent0 );
+    QObject::connect( tpgrid[0], &QyController::controlClicked,
+        this, &MainWindow::controlClicked0 );
+
+    QObject::connect( tpgrid[1], &QyController::controlClicked,
+        this, &MainWindow::controlClicked );
+    QObject::connect( tpgrid[2], &QyController::controlClicked,
+        this, &MainWindow::controlClicked );
+    QObject::connect( tpgrid[3], &QyController::controlClicked,
+        this, &MainWindow::controlClicked );
+    QObject::connect( tpgrid[4], &QyController::controlClicked,
+        this, &MainWindow::controlClicked );
+    QObject::connect( tpgrid[5], &QyController::controlClicked,
+        this, &MainWindow::controlClicked );
 
     tpgrid[0]->setEmitSliderValue(true);
     QObject::connect( tpgrid[0], &QyController::sliderPositionChanged,
@@ -98,24 +111,29 @@ MainWindow::MainWindow(QWidget *parent)
 
 //    auto const&  tpgbox = controllerVectorBox.widgets();
 
+//    QyControllerVectorGrid * controllerVectorGrid1 = new QyControllerVectorGrid(2,3,false,"objname",&rowLabels, &colLabels);
+//    QyControllerVectorGrid * controllerVectorGrid2 = new QyControllerVectorGrid(2,3,false,"objname",&rowLabels, &colLabels);
 
 
 }
 
-void MainWindow::handleUserEvent(int kmods, bool ct, bool sw, int val)
+void MainWindow::controlClicked(int kmods, bool ct, bool sw, int id, int goupIndex )
 {
-    qDebug() << "++++++ handleUserEvent " << val
+    qDebug() << "++x++++ id " << id
+        << " goupIndex " << goupIndex
         << " ct " << ct
         << " sw " << sw
         <<  " kmods " << kmods;
 }
 
-void MainWindow::handleUserEvent0(int kmods, bool ct, bool sw, int val)
+void MainWindow::controlClicked0(int kmods, bool ct, bool sw, int id, int goupIndex )
 {
-    qDebug() << "++++++ handleUserEvent0 " << val
+    qDebug() << "++0++++ id " << id
+        << " goupIndex " << goupIndex
         << " ct " << ct
         << " sw " << sw
         <<  " kmods " << kmods;
+
     controllerVectorGrid->widgets()[3]->setRemoteControlled(ct);
     controllerVectorGrid->widgets()[3]->setInvertSetSliderPos(sw);
 }

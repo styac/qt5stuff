@@ -28,35 +28,31 @@ class QyAbstractControllerPrivate;
 class QYWIDGET_LIBSHARED_EXPORT QyAbstractController : public QyAbstractIndicator
 {
     Q_OBJECT
-    Q_PROPERTY(bool symmetric READ symmetric WRITE setSymmetric)
-    Q_PROPERTY(bool emitSliderValue READ emitSliderValue WRITE setEmitSliderValue)
-    Q_PROPERTY(bool invertSetSliderPos READ invertSetSliderPos WRITE setInvertSetSliderPos)
-    Q_PROPERTY(bool invertEmitSliderPos READ invertEmitSliderPos WRITE setInvertEmitSliderPos)
-    Q_PROPERTY(bool remoteControlled READ remoteControlled WRITE setRemoteControlled)
-    Q_PROPERTY(bool switchCtrl READ switchCtrl WRITE setSwitchCtrl)
-    Q_PROPERTY(bool switchShift READ switchShift WRITE setSwitchShift)
-    Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-    Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-    Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
-    Q_PROPERTY(int valueId READ valueId WRITE setValueId)
-    Q_PROPERTY(int singleStep READ singleStep WRITE setSingleStep)
-    Q_PROPERTY(int pageStep READ pageStep WRITE setPageStep)
-    Q_PROPERTY(int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
-    Q_PROPERTY(int userEventValue READ userEventValue WRITE setUserEventValue)
-    Q_PROPERTY(Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType)
+    Q_PROPERTY( bool symmetric READ symmetric WRITE setSymmetric )
+    Q_PROPERTY( bool emitSliderValue READ emitSliderValue WRITE setEmitSliderValue )
+    Q_PROPERTY( bool invertSetSliderPos READ invertSetSliderPos WRITE setInvertSetSliderPos )
+    Q_PROPERTY( bool invertEmitSliderPos READ invertEmitSliderPos WRITE setInvertEmitSliderPos )
+    Q_PROPERTY( bool remoteControlled READ remoteControlled WRITE setRemoteControlled )
+    Q_PROPERTY( bool controlState0 READ controlState0 WRITE setControlState0 )
+    Q_PROPERTY( bool controlState1 READ controlState1 WRITE setControlState1 )
+    Q_PROPERTY( double minimum READ minimum WRITE setMinimum )
+    Q_PROPERTY( double maximum READ maximum WRITE setMaximum )
+    Q_PROPERTY( double value READ value WRITE setValue NOTIFY valueChanged USER true )
+    Q_PROPERTY( int singleStep READ singleStep WRITE setSingleStep )
+    Q_PROPERTY( int pageStep READ pageStep WRITE setPageStep )
+    Q_PROPERTY( int sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged )
+    Q_PROPERTY( Qy::ValuePhysicalType valuePhysicalType READ valuePhysicalType WRITE setValuePhysicalType )
     Q_PROPERTY( QString suffix READ suffix WRITE setSuffix )
 
 public:
     void setSymmetric(bool);
-    void setSwitchCtrl(bool);
-    void setSwitchShift(bool);
+    void setControlState0(bool);
+    void setControlState1(bool);
     void setControllerIndicator(bool);
     void setMinimum(double);
     void setMaximum(double);
     void setSingleStep(int);
     void setPageStep(int);
-    void setUserEventValue(int);
-    void setValueId(int);
     void setValuePhysicalType(Qy::ValuePhysicalType);
     void setSuffix(QString const&);
 
@@ -68,8 +64,8 @@ public:
 
     Qt::Orientation orientation() const;
     bool symmetric() const;
-    bool switchCtrl() const;
-    bool switchShift() const;
+    bool controlState0() const;
+    bool controlState1() const;
     bool controllerIndicator() const;
     bool emitSliderValue() const;
     bool invertSetSliderPos() const;
@@ -83,8 +79,6 @@ public:
     int singleStep() const;
     int pageStep() const;
     int sliderPosition() const;
-    int userEventValue() const;
-    int valueId() const;
     Qy::ValuePhysicalType valuePhysicalType() const;
     QString const& suffix() const;
 
@@ -102,8 +96,14 @@ Q_SIGNALS:
     void valueChanged(double value, int valueId);
     void rangeChanged(int min, int max);
 
+    // sent by middle mouse click and Key_Insert
+    // opcode = 0..3 (shift=1, ctrl=2, shift+ctrl=3)
+
+    void controlClicked( int opcode, bool state0, bool state1, int id, int goupIndex );
+
 protected:
     ~QyAbstractController();
+    // add id
     QyAbstractController(QyAbstractControllerPrivate &dd, QWidget *parent = nullptr);
     void valueToClipboardFormat( QString& res );
     bool valueFromClipboardFormat( const QString& res );

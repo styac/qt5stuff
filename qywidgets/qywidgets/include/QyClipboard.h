@@ -18,10 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define QyClipboard_use 1
-
-#if QyClipboard_use==1
-
 #include <QString>
 
 namespace QyClipboard {
@@ -30,5 +26,3 @@ QString past();
 void copy( const QString& text );
 
 } // end namespace QyClipboard
-
-#endif

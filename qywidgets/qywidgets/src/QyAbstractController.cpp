@@ -33,7 +33,6 @@ QyAbstractControllerPrivate::QyAbstractControllerPrivate()
     , valueHandler()
     , controllerTransformer( valueVector, true ) // vv[0] reserved
     , lastPosition(0)
-    , userEventValue(0)
     , remoteControlledColorAlpha(128)
     , valuePhysicalType(Qy::VPT_Number)
     , flags(0)
@@ -86,7 +85,7 @@ QyAbstractController::QyAbstractController(QyAbstractControllerPrivate &dd, QWid
 {
     Q_D(QyAbstractController);
     setSymmetric(false);
-    d->styleData.setColors( d->leftColor, this->palette().color(QPalette::Window).darker() );
+    d->styleData.setColors( d->stateOnColor, this->palette().color(QPalette::Window).darker() );
 }
 
 QyAbstractController::~QyAbstractController()
@@ -99,7 +98,7 @@ void QyAbstractController::setRange(double min, double max)
     if( d->controllerTransformer.setRange(min, max) ) {
         emit rangeChanged(d->controllerTransformer.getMinimum(), d->controllerTransformer.getMaximum());
         if( d->controllerTransformer.recalculate(0) ) {
-            emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
+            emit valueChanged( d->controllerTransformer.getValue(0), d->id );
             update();
         }
     }
@@ -157,36 +156,22 @@ int QyAbstractController::pageStep() const
     return d->valueHandler.getPageStep();
 }
 
-void QyAbstractController::setUserEventValue(int val)
-{
-    Q_D(QyAbstractController);
-    d->userEventValue = val;
-}
-
 void QyAbstractController::setValuePhysicalType(Qy::ValuePhysicalType val)
 {
     Q_D(QyAbstractController);
     d->valuePhysicalType = val;
 }
 
-
-int QyAbstractController::userEventValue() const
+bool QyAbstractController::controlState0() const
 {
     Q_D(const QyAbstractController);
-    return d->userEventValue;
+    return d->extraState.s0;
 }
 
-
-bool QyAbstractController::switchCtrl() const
+bool QyAbstractController::controlState1() const
 {
     Q_D(const QyAbstractController);
-    return d->switchCtrl;
-}
-
-bool QyAbstractController::switchShift() const
-{
-    Q_D(const QyAbstractController);
-    return d->switchShift;
+    return d->extraState.s1;
 }
 
 Qy::ValuePhysicalType QyAbstractController::valuePhysicalType() const
@@ -204,16 +189,16 @@ void QyAbstractController::setSymmetric( bool val )
     }
 }
 
-void QyAbstractController::setSwitchCtrl(bool val)
+void QyAbstractController::setControlState0(bool val)
 {
     Q_D(QyAbstractController);
-    d->switchCtrl = val;
+    d->extraState.s0 = val;
 }
 
-void QyAbstractController::setSwitchShift(bool val)
+void QyAbstractController::setControlState1(bool val)
 {
     Q_D(QyAbstractController);
-    d->switchShift = val;
+    d->extraState.s1 = val;
 }
 
 void QyAbstractController::setControllerIndicator(bool val)
@@ -240,8 +225,8 @@ QString const& QyAbstractController::suffix() const
 void QyAbstractController::setRemoteControlled(bool val)
 {
     Q_D(QyAbstractController);
-    if( d->remoteControlled != val ) {
-        d->remoteControlled = val;
+    if( d->extraState.remoteControlled != val ) {
+        d->extraState.remoteControlled = val;
         d->styleData.remoteControlled = val;
         update();
     }
@@ -250,7 +235,7 @@ void QyAbstractController::setRemoteControlled(bool val)
 bool QyAbstractController::remoteControlled() const
 {
     Q_D(const QyAbstractController);
-    return d->remoteControlled;
+    return d->extraState.remoteControlled;
 }
 
 bool QyAbstractController::symmetric() const
@@ -276,7 +261,7 @@ void QyAbstractController::setValue(double value)
     Q_D(QyAbstractController);
     if( d->controllerTransformer.setValue( value, 0 )) {
         update();
-        emit valueChanged( value, d->valueId );
+        emit valueChanged( value, d->id );
         if( d->emitSliderValue ) {
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
             emit sliderPositionChanged( sliderValue ? QyBase::maximumSlider - sliderValue : sliderValue );
@@ -304,7 +289,7 @@ void QyAbstractController::setSliderPosition(int val)
 {
     Q_D(QyAbstractController);
     // only if remote controlled
-    if( ! d->remoteControlled ) {
+    if( ! d->extraState.remoteControlled ) {
         return;
     }
 
@@ -314,7 +299,7 @@ void QyAbstractController::setSliderPosition(int val)
         if( d->emitSliderValue ) {
             emit sliderPositionChanged( sliderVal );
         }
-        emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
+        emit valueChanged( d->controllerTransformer.getValue(0), d->id );
         update();
     }
 }
@@ -335,18 +320,6 @@ bool QyAbstractController::invertEmitSliderPos() const
 {
     Q_D( const QyAbstractController);
     return d->invertEmitSliderPos;
-}
-
-int QyAbstractController::valueId() const
-{
-    Q_D( const QyAbstractController);
-    return d->valueId;
-}
-
-void QyAbstractController::setValueId(int val)
-{
-    Q_D(QyAbstractController);
-    d->valueId = val;
 }
 
 void QyAbstractController::setEmitSliderValue(bool val)
@@ -457,7 +430,6 @@ bool QyAbstractController::valueFromClipboardFormat( const QString& res )
     }
     return false;
 }
-
 
 QT_END_NAMESPACE
 

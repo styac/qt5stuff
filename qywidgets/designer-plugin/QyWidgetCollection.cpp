@@ -23,6 +23,7 @@ QyWidgetsCollection::QyWidgetsCollection(QObject *parent)
 {
     widgets.append(new QyIndicator_plugin(this));
     widgets.append(new QyController_plugin(this));
+    widgets.append(new QyButton_plugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> QyWidgetsCollection::customWidgets() const

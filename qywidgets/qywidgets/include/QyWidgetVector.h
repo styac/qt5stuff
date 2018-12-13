@@ -31,6 +31,7 @@ typedef QVector<QString> StringVectorType;
 template< class WidgetType, class LayoutType >
 class QyWidgetVector {
 public:
+    using WidgetVector = QVector<WidgetType *>;
    ~QyWidgetVector()
     {
         delete l;
@@ -73,7 +74,7 @@ public:
         return thisSize;
     }
 
-    inline void applyId( int idv, int ide, bool rowSequence = true )
+    inline void applyId( int id, bool rowSequence = true )
     {
         if( rowSequence || (col==0) ) {
             for( auto& v : wv ) {
@@ -82,16 +83,13 @@ public:
 //                QString cap( QString("%0").arg(idv) );
 //                v->setCaption( cap );
 //                // TEST END
-
-                v->setUserEventValue(ide++);
-                v->setValueId(idv++);
+                v->setId(id++);
             }
             return;
         }
         // TODO make coloumn sequence
         for( auto& v : wv ) {
-            v->setUserEventValue(ide++);
-            v->setValueId(idv++);
+            v->setId(id++);
         }
     }
 
@@ -112,7 +110,7 @@ protected:
     , flags(0)
     {}
 
-    QVector<WidgetType *>   wv;
+    WidgetVector            wv;
     LayoutType            * l;
     QSize                   thisSize;
     int                     colLabelHeight;
@@ -176,7 +174,7 @@ public:
             uint16_t labi = 0;
             for( uint16_t row = row0; row < rowp; ++row, ++labi ) {
                 auto * w = new QLabel( rowLabels->value(labi) );
-                w->setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
+                w->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
                 w->setObjectName(QString("%0_rowLabel_%1").arg( objectNameBase ).arg(labi));
                 w->setWordWrap(true);
                 w->adjustSize();
@@ -191,7 +189,7 @@ public:
         if( colMajor ) {
             for( uint16_t col = col0; col < colp; ++col ) {
                 for( uint16_t row = row0; row < rowp; ++row, ++obni ) {
-                    auto * w = new WidgetType();
+                    auto * w = new WidgetType(obni);
                     w->setObjectName(QString("%0_%1").arg( objectNameBase ).arg(obni));
                     // setAccessibleName(const QString &name)
                     BaseType::wv.push_back(w);
@@ -201,7 +199,7 @@ public:
         } else {
             for( uint16_t row = row0; row < rowp; ++row ) {
                 for( uint16_t col = col0; col < colp; ++col, ++obni ) {
-                    auto * w = new WidgetType();
+                    auto * w = new WidgetType(obni);
                     w->setObjectName(QString("%0_%1").arg( objectNameBase ).arg(obni));
                     // setAccessibleName(const QString &name)
                     BaseType::wv.push_back(w);
@@ -212,7 +210,7 @@ public:
     }
 };
 
-// TODO adapt changes
+// TODO adapt changes - add labels
 template< class WidgetType >
 class QyWidgetVectorBox : public QyWidgetVector<WidgetType, QBoxLayout> {
 public:
@@ -231,7 +229,8 @@ public:
         }
 
         for( uint16_t xi = 0; xi < rowp; ++ xi ) {
-            WidgetType * w = new WidgetType();
+            WidgetType * w = new WidgetType(xi);
+            w->setObjectName(QString("%0_%1").arg( objectNameBase ).arg(xi));
             BaseType::wv.push_back(w);
             BaseType::l->addWidget(w,xi);
         }

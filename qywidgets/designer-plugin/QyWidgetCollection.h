@@ -20,6 +20,7 @@
 
 #include "QyController_plugin.h"
 #include "QyIndicator_plugin.h"
+#include "QyButton_plugin.h"
 
 #include <QtDesigner/QtDesigner>
 #include <QtCore/qplugin.h>

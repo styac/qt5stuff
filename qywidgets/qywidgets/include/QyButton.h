@@ -18,50 +18,57 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyAbstractIndicator.h"
+#include "QyEnums.h"
 #include "QyTypes.h"
+#include "QyGlobal.h"
+#include "QyAbstractButton.h"
+#include "QyStyleOption.h"
 
 QT_BEGIN_NAMESPACE
 
-class QyIndicatorPrivate;
-class QyStyleOptionIndicator;
+class QyButtonPrivate;
 
-class QYWIDGET_LIBSHARED_EXPORT QyIndicator: public QyAbstractIndicator
+class QYWIDGET_LIBSHARED_EXPORT QyButton : public QyAbstractButton
 {
     Q_OBJECT
-    Q_PROPERTY( uint vectorsize READ vectorsize WRITE setVectorsize )
-    Q_PROPERTY( QyBase::ValueIO value READ value WRITE setValue )
 
 public:
-    explicit QyIndicator(QWidget *parent = nullptr);
-    explicit QyIndicator( int groupIndex, QWidget *parent = nullptr);
+    explicit QyButton( QWidget *parent = nullptr );
+    explicit QyButton( int groupIndex, QWidget *parent = nullptr);
 
-    ~QyIndicator();
+    ~QyButton();
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
-    QyBase::ValueIO value() const;
-
-public Q_SLOTS:
-    void setVectorsize( uint );
-    uint vectorsize() const;
-    void setValue(const QyBase::ValueIO& );
 
 protected:
-    bool event(QEvent *e) override;
+    QyButton(QyButtonPrivate &dd, QWidget *parent = nullptr);
+
+    void keyPressEvent(QKeyEvent *ev) override;
+//    void mouseMoveEvent(QMouseEvent *e) override;
+//    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void initStyleOption(QyStyleOptionButton *opt) const;
     void resizeEvent(QResizeEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
+//    bool event(QEvent *e) override;
+//    void wheelEvent(QWheelEvent *e) override;
     void enterEvent(QEvent *e) override;
     void leaveEvent(QEvent *e) override;
-
-    // what is needed ?
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
-    void initStyleOption(QyStyleOptionIndicator *opt) const;
+
+Q_SIGNALS:
+    // sent by middle mouse click and Key_Delete
+    // userEventValue is settable
+    // keyMod = 0..3 (shift=1, ctrl=2, shift+ctrl=3)
+    // onoff - every 2nd for all 4 cases
+
+    // TODO to abtract
+    void controlClicked( int opcode, bool switchCtrl, bool switchShift, int id, int goupIndex );
 
 private:
-    Q_DECLARE_PRIVATE(QyIndicator)
-    Q_DISABLE_COPY(QyIndicator)
+    Q_DISABLE_COPY(QyButton)
+    Q_DECLARE_PRIVATE(QyButton)
 };
 
 QT_END_NAMESPACE

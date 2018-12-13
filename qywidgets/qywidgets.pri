@@ -24,7 +24,7 @@ QMAKE_CXXFLAGS_RELEASE += -O2
 # LIBS = -L/usr/local/qt5.9/lib
 
 QT_PREF = /usr/include/qt5
-QT_VER = 5.6.2
+QT_VER = 5.9.4
 
 INCLUDEPATH += \
     /usr/include/c++/7 \
@@ -50,7 +50,12 @@ SOURCES += \
     qywidgets/src/QyColors.cpp \
     qywidgets/src/QyTransfomerParameters.cpp \
     qywidgets/src/QyValueTransfomer.cpp \
-    qywidgets/src/QyClipboard.cpp
+    qywidgets/src/QyClipboard.cpp \
+    qywidgets/src/QyWidgetVectorSpec.cpp \
+    qywidgets/src/QyButton.cpp \
+    qywidgets/src/QyAbstractButton.cpp \
+    qywidgets/src/QyButtonGuard.cpp \
+    qywidgets/src/QyButtonVector.cpp
 
 HEADERS += \
     qywidgets/private/QyController_p.h \
@@ -58,11 +63,14 @@ HEADERS += \
     qywidgets/private/QyAbstractController_p.h \
     qywidgets/private/QyAbstractIndicator_p.h \
     qywidgets/private/QyIndicator_p.h \
+    qywidgets/private/QyButton_p.h \
     qywidgets/private/QyColors.h \
     qywidgets/private/QyStyleData.h \
     qywidgets/private/QyValue.h \
     qywidgets/private/QyValueHandler.h \
     qywidgets/private/QyValueTransfomer.h \
+    qywidgets/private/QyAbstractButton_p.h \
+    qywidgets/private/QyExtraState.h \
     qywidgets/include/QyEnums.h \
     qywidgets/include/QyAbstractController.h \
     qywidgets/include/QyAbstractIndicator.h \
@@ -74,5 +82,11 @@ HEADERS += \
     qywidgets/include/QyGlobal.h \
     qywidgets/include/QyWidgetVector.h \
     qywidgets/include/QyClipboard.h \
-    qywidgets/include/QyWidgetVector.h
+    qywidgets/include/QyWidgetVector.h \
+    qywidgets/include/QyWidgetVectorSpec.h \
+    qywidgets/include/QyButton.h \
+    qywidgets/include/QyAbstractButton.h \
+    qywidgets/include/QyButtonVector.h \
+    qywidgets/include/QyButtonGuard.h \
+
 

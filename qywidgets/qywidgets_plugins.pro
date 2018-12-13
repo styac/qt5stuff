@@ -17,10 +17,12 @@ include( qywidgets.pri )
 SOURCES += \
     designer-plugin/QyController_plugin.cpp \
     designer-plugin/QyIndicator_plugin.cpp \
-    designer-plugin/QyWidgetCollection.cpp
+    designer-plugin/QyWidgetCollection.cpp \
+    designer-plugin/QyButton_plugin.cpp
 
 HEADERS += \
     designer-plugin/QyController_plugin.h \
     designer-plugin/QyIndicator_plugin.h \
-    designer-plugin/QyWidgetCollection.h
+    designer-plugin/QyWidgetCollection.h \
+    designer-plugin/QyButton_plugin.h
 

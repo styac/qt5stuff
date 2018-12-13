@@ -113,7 +113,7 @@
      <item>
       <widget class="QyController" name="controller_mid_3">
        <property name="graphicStyle">
-        <enum>Qy::GS_HalfRotary</enum>
+        <enum>Qy::GSI_HalfRotary</enum>
        </property>
       </widget>
      </item>
@@ -144,7 +144,7 @@
       </rect>
      </property>
      <property name="graphicStyle">
-      <enum>Qy::GS_HalfRotary</enum>
+      <enum>Qy::GSI_HalfRotary</enum>
      </property>
      <property name="caption">
       <string>asdkaslkdjaslkdjaslkdja</string>
@@ -153,6 +153,16 @@
       <string>km/h</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QyButton" name="button">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>230</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -187,6 +197,11 @@
    <class>QyController</class>
    <extends>QFrame</extends>
    <header>QyController.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QyButton</class>
+   <extends>QWidget</extends>
+   <header>QyButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -61,7 +61,7 @@
 QT_BEGIN_NAMESPACE
 
 class QyControllerPrivate;
-class QyStyleOption;
+class QyStyleOptionIndicator;
 
 class QYWIDGET_LIBSHARED_EXPORT QyController: public QyAbstractController
 {
@@ -69,25 +69,22 @@ class QYWIDGET_LIBSHARED_EXPORT QyController: public QyAbstractController
 
 public:
     explicit QyController( QWidget *parent = nullptr );
-    QyController( int valueId, int userEventValue, QWidget *parent = nullptr);
+    explicit QyController( int groupIndex, QWidget *parent = nullptr);
+    explicit QyController( int id, int groupIndex, QWidget *parent = nullptr);
 
     ~QyController();
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
-Q_SIGNALS:
-    // sent by middle mouse click and Key_Delete
-    // userEventValue is settable
-    // keyMod = 0..3 (shift=1, ctrl=2, shift+ctrl=3)
-    // onoff - every 2nd for all 4 cases
-    void userEvent( int opcode, bool switchCtrl, bool switchShift, int userEventValue );
+// Q_SIGNALS:
+
 
 protected:
     void keyPressEvent(QKeyEvent *ev) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
-    void initStyleOption(QyStyleOption *opt) const;
+    void initStyleOption(QyStyleOptionIndicator *opt) const;
     void resizeEvent(QResizeEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;

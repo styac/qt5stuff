@@ -37,22 +37,28 @@ class QyAbstractIndicatorPrivate;
 class QYWIDGET_LIBSHARED_EXPORT QyAbstractIndicator : public QFrame
 {
     Q_OBJECT
-    Q_PROPERTY( bool mirrored READ mirrored WRITE setMirrored )
-    Q_PROPERTY( bool invertedFlow READ invertedFlow WRITE setInvertedFlow )
-    Q_PROPERTY( bool symmetric READ symmetric WRITE setSymmetric)
-    Q_PROPERTY( Qt::Orientation orientation READ orientation WRITE setOrientation )
-    Q_PROPERTY( Qt::Orientation sequenceOrientation READ sequenceOrientation WRITE setSequenceOrientation )
+    Q_PROPERTY( int id READ id WRITE setId )
     Q_PROPERTY( double minimum READ minimum WRITE setMinimum)
     Q_PROPERTY( double maximum READ maximum WRITE setMaximum)
-    Q_PROPERTY( Qy::GraphicStyle graphicStyle READ graphicStyle WRITE setGraphicStyle)
+
+    Q_PROPERTY( Qt::Orientation orientation READ orientation WRITE setOrientation )
+    Q_PROPERTY( Qt::Orientation sequenceOrientation READ sequenceOrientation WRITE setSequenceOrientation )
+    Q_PROPERTY( Qy::GraphicStyleIndicator graphicStyle READ graphicStyle WRITE setGraphicStyle)
     Q_PROPERTY( Qy::TextBoxPlacement textBoxPlacement READ textBoxPlacement WRITE setTextBoxPlacement)
     Q_PROPERTY( Qy::ColorStyle colorStyle READ colorStyle WRITE setColorStyle)
     Q_PROPERTY( QString caption READ caption WRITE setCaption)
     Q_PROPERTY( QColor textColor READ textColor WRITE setTextColor)
-    Q_PROPERTY( QColor rightColor READ rightColor WRITE setRightColor )
-    Q_PROPERTY( QColor leftColor READ leftColor WRITE setLeftColor )
+    Q_PROPERTY( QColor stateOffColor READ stateOffColor WRITE setStateOffColor )
+    Q_PROPERTY( QColor stateOnColor READ stateOnColor WRITE setStateOnColor )
+    Q_PROPERTY( bool mirrored READ mirrored WRITE setMirrored )
+    Q_PROPERTY( bool invertedFlow READ invertedFlow WRITE setInvertedFlow )
+    Q_PROPERTY( bool symmetric READ symmetric WRITE setSymmetric)
 
 public:
+    int groupIndex() const;
+    int id() const;
+    void setId(int);
+
     void initTransformParameters( double p0, double p1 );
 
     bool registerTransformFunctions(
@@ -67,15 +73,15 @@ public:
     void setSymmetric(bool);
     void setMirrored( bool );
     void setInvertedFlow( bool );
-    void setGraphicStyle(Qy::GraphicStyle);
+    void setGraphicStyle(Qy::GraphicStyleIndicator);
     void setTextBoxPlacement(Qy::TextBoxPlacement);
     void setColorStyle(Qy::ColorStyle);
     void setOrientation(Qt::Orientation);
     void setSequenceOrientation(Qt::Orientation);
 
     void setTextColor(QColor const&);
-    void setRightColor(QColor const&);
-    void setLeftColor(QColor const&);
+    void setStateOffColor(QColor const&);
+    void setStateOnColor(QColor const&);
 
     QString const& caption() const;
     QString const& suffix( uint8_t ) const;
@@ -87,13 +93,13 @@ public:
     double value(int) const;
     Qt::Orientation orientation() const;
     Qt::Orientation sequenceOrientation() const;
-    Qy::GraphicStyle graphicStyle() const;
+    Qy::GraphicStyleIndicator graphicStyle() const;
     Qy::TextBoxPlacement textBoxPlacement() const;
     Qy::ColorStyle colorStyle() const;
 
     QColor const& textColor() const;
-    QColor const& rightColor() const;
-    QColor const& leftColor() const;
+    QColor const& stateOffColor() const;
+    QColor const& stateOnColor() const;
 
 public Q_SLOTS:
     void setValue(double,int);
@@ -102,6 +108,8 @@ public Q_SLOTS:
 protected:
     QyAbstractIndicator(QyAbstractIndicatorPrivate &dd, QWidget *parent = nullptr);
     ~QyAbstractIndicator();
+
+//    void setGroupIndex(int);
 
 private:
     Q_DISABLE_COPY(QyAbstractIndicator)

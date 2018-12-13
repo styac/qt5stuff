@@ -31,10 +31,12 @@
 QT_BEGIN_NAMESPACE
 
 QyAbstractIndicatorPrivate::QyAbstractIndicatorPrivate( bool res0 )
-    : valueVector()
+    : id(0)
+    , groupIndex(0)
+    , stateOnColor(0,255,210,255)
+    , stateOffColor(0,210,255,255)
+    , valueVector()
     , indicatorTransformer( valueVector, res0 )
-    , leftColor(0,255,210,255)
-    , rightColor(0,210,255,255)
 {
 }
 
@@ -50,7 +52,7 @@ http://doc.qt.io/qt-5/layout.html
 Custom Widgets in Layouts
 
 When you make your own widget class, you should also communicate its layout properties.
-If the widget uses one of Qt's layouts, this is already taken care of.
+If the widget uses one of Qt layouts, this is already taken care of.
 
 If the widget does not have any child widgets, or uses manual layout,
 you can change the behavior of the widget using any or all of the following mechanisms:
@@ -63,7 +65,7 @@ you can change the behavior of the widget using any or all of the following mech
 Call QWidget::updateGeometry() whenever the size hint, minimum size hint or size policy changes. This will cause a layout recalculation. Multiple consecutive calls to QWidget::updateGeometry() will only cause one layout recalculation.
 
 If the preferred height of your widget depends on its actual width
-(e.g., a label with automatic word-breaking), set the height-for-width flag in the widget's size
+(e.g., a label with automatic word-breaking), set the height-for-width flag in the widget size
 policy and reimplement QWidget::heightForWidth().
 
 
@@ -94,23 +96,23 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
     }
 //    qDebug() << "recalculateStyleData  fontHeight: " << fontHeight ;
 
-    styleData.painterWidth = qMax( int(StyleData::minPainterWidth),
-        qMin( minDimension / StyleData::adjPainterWidth, int(StyleData::maxPainterWidth) ));
+    styleData.painterWidth = qMax( int(StyleDataIndicator::minPainterWidth),
+        qMin( minDimension / StyleDataIndicator::adjPainterWidth, int(StyleDataIndicator::maxPainterWidth) ));
 
     const int margin = (styleData.minMargin + styleData.painterWidth);
 
     switch( styleData.graphicStyle ) {
-    case Qy::GS_NoGraphics:
+    case Qy::GSI_NoGraphics:
         {
             styleData.textBoxPlacement = Qy::TB_AutoTextBox;
         }
         break;
-    case Qy::GS_Slider:
+    case Qy::GSI_Slider:
         {
 
         }
         break;
-    case Qy::GS_Rotary:
+    case Qy::GSI_Rotary:
         {
             // handle orientation, mirroring,...
             styleData.slotSize = 24*styleData.fracDegree;
@@ -128,7 +130,7 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
             // messageTextRect - one line under
         }
         break;
-    case Qy::GS_HalfRotary:
+    case Qy::GSI_HalfRotary:
         {
             // handle orientation, mirroring,...
             styleData.slotSize = 90*styleData.fracDegree;
@@ -152,17 +154,17 @@ void QyAbstractIndicatorPrivate::recalculateStyleData( const QyAbstractIndicator
             }
         }
         break;
-    case Qy::GS_Triangle:
+    case Qy::GSI_Triangle:
         {
 
         }
         break;
-    case Qy::GS_RoundLed:
+    case Qy::GSI_RoundLed:
         {
 
         }
         break;
-    case Qy::GS_SquareLed:
+    case Qy::GSI_SquareLed:
         {
 
         }
@@ -198,6 +200,19 @@ QyAbstractIndicator::QyAbstractIndicator(QyAbstractIndicatorPrivate &dd, QWidget
 QyAbstractIndicator::~QyAbstractIndicator()
 {
 }
+
+void QyAbstractIndicator::setId( int val )
+{
+    Q_D(QyAbstractIndicator);
+    d->id = val;
+}
+
+int QyAbstractIndicator::id() const
+{
+    Q_D(const QyAbstractIndicator);
+    return d->id;
+}
+
 
 QString const& QyAbstractIndicator::caption() const
 {
@@ -338,10 +353,10 @@ void QyAbstractIndicator::setOrientation(Qt::Orientation val )
     update();
 }
 
-void QyAbstractIndicator::setGraphicStyle(Qy::GraphicStyle val)
+void QyAbstractIndicator::setGraphicStyle(Qy::GraphicStyleIndicator val)
 {
     Q_D(QyAbstractIndicator);
-    if( val >= Qy::GS_MAX) {
+    if( val >= Qy::GSI_MAX) {
         return;
     }
     if( val == d->styleData.graphicStyle ) {
@@ -402,7 +417,7 @@ Qt::Orientation QyAbstractIndicator::orientation() const
     return d->styleData.orientation;
 }
 
-Qy::GraphicStyle QyAbstractIndicator::graphicStyle() const
+Qy::GraphicStyleIndicator QyAbstractIndicator::graphicStyle() const
 {
     Q_D(const QyAbstractIndicator);
     return d->styleData.graphicStyle;
@@ -441,21 +456,21 @@ void QyAbstractIndicator::setTextColor(QColor const& val)
     update();
 }
 
-void QyAbstractIndicator::setRightColor(QColor const& val)
+void QyAbstractIndicator::setStateOffColor(QColor const& val)
 {
     Q_D(QyAbstractIndicator);
-    if (d->styleData.rightColor == val)
+    if (d->styleData.stateOffColor == val)
         return;
-    d->styleData.rightColor = val;
+    d->styleData.stateOffColor = val;
     update();
 }
 
-void QyAbstractIndicator::setLeftColor(QColor const& val)
+void QyAbstractIndicator::setStateOnColor(QColor const& val)
 {
     Q_D(QyAbstractIndicator);
-    if (d->styleData.leftColor == val)
+    if (d->styleData.stateOnColor == val)
         return;
-    d->styleData.leftColor = val;
+    d->styleData.stateOnColor = val;
     update();
 }
 
@@ -465,16 +480,28 @@ QColor const& QyAbstractIndicator::textColor() const
     return d->styleData.textColor;
 }
 
-QColor const& QyAbstractIndicator::rightColor() const
+QColor const& QyAbstractIndicator::stateOffColor() const
 {
     Q_D( const QyAbstractIndicator);
-    return d->styleData.rightColor;
+    return d->styleData.stateOffColor;
 }
 
-QColor const& QyAbstractIndicator::leftColor() const
+QColor const& QyAbstractIndicator::stateOnColor() const
 {
     Q_D( const QyAbstractIndicator);
-    return d->styleData.leftColor;
+    return d->styleData.stateOnColor;
+}
+
+//void QyAbstractIndicator::setGroupIndex( int val )
+//{
+//    Q_D(QyAbstractIndicator);
+//    d->groupIndex = val;
+//}
+
+int QyAbstractIndicator::groupIndex() const
+{
+    Q_D(const QyAbstractIndicator);
+    return d->groupIndex;
 }
 
 QT_END_NAMESPACE

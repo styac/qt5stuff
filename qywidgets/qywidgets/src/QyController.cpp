@@ -25,7 +25,7 @@
 
 QT_BEGIN_NAMESPACE
 
-void drawQyMinimalStyle( const QyStyleOption *option, QPainter *p );
+void drawQyMinimalStyle( const QyStyleOptionIndicator *option, QPainter *p );
 
 void QyControllerPrivate::init()
 {
@@ -33,7 +33,7 @@ void QyControllerPrivate::init()
     q->setFocusPolicy(Qt::WheelFocus);
 }
 
-void QyController::initStyleOption( QyStyleOption *option) const
+void QyController::initStyleOption( QyStyleOptionIndicator *option) const
 {
     if (!option)
         return;
@@ -50,14 +50,23 @@ QyController::QyController( QWidget *parent )
     d->init();
 }
 
-QyController::QyController( int valueId, int userEventValue, QWidget *parent )
+QyController::QyController( int groupIndex, QWidget *parent )
     : QyAbstractController(*new QyControllerPrivate, parent)
 {
     Q_D(QyController);
     d->init();
-    d->valueId = valueId;
-    d->userEventValue = userEventValue;
+    d->groupIndex = groupIndex;
 }
+
+QyController::QyController( int id, int groupIndex, QWidget *parent )
+    : QyAbstractController(*new QyControllerPrivate, parent)
+{
+    Q_D(QyController);
+    d->init();
+    d->groupIndex = groupIndex;
+    d->id = id;
+}
+
 
 QyController::~QyController()
 {
@@ -75,7 +84,7 @@ void QyController::resizeEvent(QResizeEvent *e)
 void QyController::paintEvent(QPaintEvent * e)
 {
     QPainter p(this);
-    QyStyleOption option;
+    QyStyleOptionIndicator option;
     initStyleOption(&option);
     drawQyMinimalStyle(&option, &p);
 //    qDebug() << " ** paintEvent: " << e ;
@@ -84,13 +93,13 @@ void QyController::paintEvent(QPaintEvent * e)
 void QyController::mouseDoubleClickEvent(QMouseEvent * e)
 {
     Q_D(QyController);
-    if( d->remoteControlled ) {
+    if( d->extraState.remoteControlled ) {
         return;
     }
 
     d->controllerTransformer.reset();
     update();
-    emit valueChanged( d->controllerTransformer.getValue(0), d->valueId);
+    emit valueChanged( d->controllerTransformer.getValue(0), d->id);
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
         emit sliderPositionChanged( d->invertEmitSliderPos ? QyBase::maximumSlider - sliderValue : sliderValue );
@@ -106,12 +115,13 @@ void QyController::mousePressEvent(QMouseEvent * e)
         auto kMods = QGuiApplication::keyboardModifiers();
         int opc = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
         if( kMods & Qt::ShiftModifier ) {
-            d->switchShift ^= 1;
+            d->extraState.s1 ^= 1;
         }
+        // extraState.s0
         if( kMods & Qt::ControlModifier ) {
-            d->switchCtrl ^= 1;
+            d->extraState.s0 ^= 1;
         }
-        emit userEvent( opc, d->switchCtrl, d->switchShift,  d->userEventValue );
+        emit controlClicked( opc, d->extraState.s0, d->extraState.s1,  d->id, d->groupIndex );
         return;
     }
 
@@ -140,7 +150,7 @@ void QyController::mouseReleaseEvent(QMouseEvent * e)
 void QyController::mouseMoveEvent(QMouseEvent * e)
 {
     Q_D(QyController);
-    if( d->remoteControlled ) {
+    if( d->extraState.remoteControlled ) {
         return;
     }
 
@@ -155,7 +165,7 @@ void QyController::mouseMoveEvent(QMouseEvent * e)
         d->lastPosition = - e->localPos().y();
     } else if( d->valueFromPoint( - e->localPos().y() ) ) {
         update();
-        emit valueChanged( d->controllerTransformer.getValue(0), d->valueId);
+        emit valueChanged( d->controllerTransformer.getValue(0), d->id);
         if( d->emitSliderValue ) {
             const auto sliderValue = d->controllerTransformer.getSliderValue(0);
             emit sliderPositionChanged( d->invertEmitSliderPos ? QyBase::maximumSlider - sliderValue : sliderValue );
@@ -203,7 +213,7 @@ void QyController::leaveEvent(QEvent *e)
 //    update();
 }
 
-// userEvent : Key_Delete -- not really used for other activity
+// clicked : Key_Delete -- not really used for other activity
 void QyController::keyPressEvent(QKeyEvent *ev)
 {
     auto kMods = QGuiApplication::keyboardModifiers();
@@ -211,22 +221,27 @@ void QyController::keyPressEvent(QKeyEvent *ev)
     Q_D(QyAbstractController);
 
     switch( key ) {
-        case Qt::Key_Insert:
+    case Qt::Key_Insert:
+//    case Qt::Key_Enter:
+//    case Qt::Key_Return:
         if( ev->isAutoRepeat() ) {
             return; // do not send repeated events
         }
         int opc = ( kMods & Qt::ShiftModifier ? 1 : 0 ) + ( kMods & Qt::ControlModifier ? 2 : 0 );
         if( kMods & Qt::ShiftModifier ) {
-            d->switchShift ^= 1;
+            d->extraState.s1 ^= 1;
         }
         if( kMods & Qt::ControlModifier ) {
-            d->switchCtrl ^= 1;
+            d->extraState.s0 ^= 1;
         }
-        emit userEvent( opc, d->switchCtrl, d->switchShift,  d->userEventValue );
+        emit controlClicked( opc, d->extraState.s0, d->extraState.s1,  d->id, d->groupIndex );
+        return;
+
+        // clicked?
         return;
     }
 
-#if QyClipboard_use==1
+
     if(( kMods & Qt::ControlModifier ) && ( key == Qt::Key_C )) {
         // clipboard copy
         QString text;
@@ -235,9 +250,8 @@ void QyController::keyPressEvent(QKeyEvent *ev)
         ev->accept();
         return;
     }
-#endif
 
-    if( d->remoteControlled ) {
+    if( d->extraState.remoteControlled ) {
         return;
     }
 
@@ -314,19 +328,24 @@ void QyController::keyPressEvent(QKeyEvent *ev)
             return;
         }
     } else {
-#if QyClipboard_use==1
         if(( kMods & Qt::ControlModifier ) && ( key == Qt::Key_V )) {
             if( ! valueFromClipboardFormat( QyClipboard::past() ) ) {
                 return;
             }
+        } else if(( kMods & Qt::ControlModifier ) && ( key == Qt::Key_X )) { // swap
+            QString valueText;
+            valueToClipboardFormat( valueText );
+            if( ! valueFromClipboardFormat( QyClipboard::past() ) ) {
+                return;
+            }
+            QyClipboard::copy( valueText );
         } else {
             return;
         }
-#endif
     }
 
     update();
-    emit valueChanged( d->controllerTransformer.getValue(0), d->valueId );
+    emit valueChanged( d->controllerTransformer.getValue(0), d->id );
     if( d->emitSliderValue ) {
         const auto sliderValue = d->controllerTransformer.getSliderValue(0);
         // TODO check if thie ok

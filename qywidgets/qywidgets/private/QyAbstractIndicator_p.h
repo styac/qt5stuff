@@ -25,7 +25,6 @@
 
 QT_BEGIN_NAMESPACE
 
-
 class QyAbstractIndicatorPrivate : public QFramePrivate
 {
     Q_DECLARE_PUBLIC(QyAbstractIndicator)
@@ -35,12 +34,15 @@ public:
     ~QyAbstractIndicatorPrivate();
 
     void recalculateStyleData( const QyAbstractIndicator * thp );
+    int32_t                 id;         // may not be needed here but in controller
+    int32_t                 groupIndex; // index in the groupvector // may not be needed here but in controller
+    QColor                  stateOnColor;
+    QColor                  stateOffColor;
+    QColor                  remoteControlledColor;
+
     QyBase::ValueVector     valueVector;
     QyBase::ValueTransfomer indicatorTransformer;
-    QColor leftColor;
-    QColor rightColor;
-    QColor remoteControlledColor;
-    StyleData styleData;
+    StyleDataIndicator      styleData;
 };
 
 QT_END_NAMESPACE

@@ -16,28 +16,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "QyStyleOption.h"
+//#include "QyWidgetVectorSpec.h"
 
-QT_BEGIN_NAMESPACE
+//// specialisations
 
-QyStyleOptionIndicator::QyStyleOptionIndicator()
-    : QStyleOptionComplex(Version, SO_Slider)
-{
-}
+//QT_BEGIN_NAMESPACE
 
-QyStyleOptionIndicator::QyStyleOptionIndicator(int version)
-    : QStyleOptionComplex(version, SO_Slider)
-{
-}
+//template class QyWidgetVectorGrid<QyController>;
 
-QyStyleOptionButton::QyStyleOptionButton()
-    : QStyleOptionComplex(Version, SO_Slider)
-{
-}
-
-QyStyleOptionButton::QyStyleOptionButton(int version)
-    : QStyleOptionComplex(version, SO_Slider)
-{
-}
-
-QT_END_NAMESPACE
+//QT_END_NAMESPACE

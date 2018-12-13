@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /*
  * Copyright (C) 2018 Istvan Simon -- stevens37 at gmail dot com
@@ -21,12 +21,14 @@
 #include "QyAbstractController.h"
 #include "QyValueHandler.h"
 #include "QyAbstractIndicator_p.h"
+#include "QyExtraState.h"
 
 QT_BEGIN_NAMESPACE
 
 class QyAbstractControllerPrivate : public QyAbstractIndicatorPrivate
 {
     Q_DECLARE_PUBLIC(QyAbstractController)
+
 public:
     QyAbstractControllerPrivate();
     ~QyAbstractControllerPrivate();
@@ -38,25 +40,19 @@ public:
     QyBase::ValueTransfomer controllerTransformer;
 
     int     lastPosition;
-    int     userEventValue;
-    int     valueId;
     int     remoteControlledColorAlpha;
 
-    Qy::ValuePhysicalType valuePhysicalType;
+    Qy::ValuePhysicalType   valuePhysicalType;
+    QyExtraState            extraState;
 
     union {
-        uint flags;
+        uint8_t flags;
         struct
         {
-            uint emitSliderValue        : 1;
-            uint invertSetSliderPos     : 1;
-            uint invertEmitSliderPos    : 1;
-            uint pressed                : 1;
-            uint remoteControlled       : 1; // in styleData
-
-            // parameter onoff
-            uint switchCtrl             : 1;
-            uint switchShift            : 1;
+            uint8_t emitSliderValue        : 1;
+            uint8_t invertSetSliderPos     : 1;
+            uint8_t invertEmitSliderPos    : 1;
+            uint8_t pressed                : 1;
         };
     };
 };
