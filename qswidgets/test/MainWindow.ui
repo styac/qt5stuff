@@ -60,18 +60,32 @@
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>120</y>
-      <width>131</width>
-      <height>64</height>
+      <x>60</x>
+      <y>300</y>
+      <width>381</width>
+      <height>60</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QsPasswordInput" name="input"/>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="type_pw_label">
+       <property name="text">
+        <string>type password</string>
+       </property>
+      </widget>
      </item>
-     <item>
-      <widget class="QsPasswordInput" name="input_2"/>
+     <item row="0" column="1">
+      <widget class="QsPasswordInput" name="type_pw_input"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="retype_pw_label">
+       <property name="text">
+        <string>retype password</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QsPasswordInput" name="retype_pw_input"/>
      </item>
     </layout>
    </widget>

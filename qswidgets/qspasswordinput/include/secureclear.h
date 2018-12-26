@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * Copyright (C) 2018 Istvan Simon -- stevens37 at gmail dot com
  *
@@ -16,30 +18,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "utils.h"
-#include <QClipboard>
-#include <QApplication>
+#include <iostream>
 
-//
-// WARNING: Clipboard history (Klipper, etc) IS NOT CLEARED
-//
-bool clipboardPaste( PWstr& text )
+template<typename T>
+inline void secureClear( const T& str )
 {
-    QClipboard *clipboard = QApplication::clipboard();
-    const QString& str = clipboard->text();
-    if( str.length() == 0 ) {
-        return false;
+    std::size_t len = std::size_t(str.capacity()) * sizeof(typename T::value_type);
+    volatile char * vpbegin = const_cast<volatile char *>((const char *)str.data());
+//    std::cout << "\nsecureClear len:" << len
+//        << " typelen:" << sizeof(typename T::value_type)
+//        << " ptr:" << (void *)vpbegin
+//        << std::endl;
+    while( len-- > 0 ) {
+//        std::cout << " " << std::hex << uint16_t(*vpbegin);
+        *vpbegin++ = 0;
     }
-    {
-        // TODO: check normalize !!! - check password managers
-        const QByteArray utf8val = str.toUtf8(); // will be shared
-        text.clear();
-        text.insert(std::begin(text), std::begin(utf8val), std::end(utf8val));
-        secureClear( utf8val );
-    }
-    // clear clipboard
-    secureClear(str);
-    clipboard->clear();
-    return true;
+//    std::cout << std::endl;
 }
 

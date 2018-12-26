@@ -19,9 +19,9 @@
  */
 
 #include "QsPasswordInput.h"
-#include "utils.h"
+#include "pwstring.h"
 
-#include "private/qwidget_p.h"
+#include <private/qwidget_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -37,6 +37,10 @@ public:
     QsPasswordInputPrivate()
     : QWidgetPrivate()
     , password(defaultPasswordBufferLength)
+    , passwordCompare(nullptr)
+    , colorCurrentPW()
+    , colorCorrectPW(Qt::green)
+    , colorWrongPW(Qt::red)
     , maxLength(QsPasswordInput::maxPasswordLengthLimit)
     , minLength(QsPasswordInput::minPasswordLengthLimit)
     , flags(0)
@@ -49,25 +53,32 @@ public:
 //    , rightTextMargin(horizontalMargin)
 //    , bottomTextMargin(verticalMargin)
     , hideCharacter('*')
-    , normalizationForm(QString::NormalizationForm_KC) // need set,get
+    , normalization(QString::NormalizationForm_KC)
     {
         frame = true;
     }
 
-    ~QsPasswordInputPrivate() {}
-
-    void init();
+    ~QsPasswordInputPrivate()
+    {
+        if( passwordCompare != nullptr ) {
+            delete passwordCompare;
+        }
+    }
 
     void processInputMethodEvent( QInputMethodEvent *e );
 
+    bool clipboardPaste();
+
     // password storage
-    PWstr   password;
+    PWstring   password;
+    PWstring   * passwordCompare;
 
     // attributes
-    QColor  passwordOkColor;        // background e.g. green
-    QColor  passwordErrorColor;     // background e.g. red
-    int     maxLength;
-    int     minLength;
+    QColor  colorCurrentPW;
+    QColor  colorCorrectPW;
+    QColor  colorWrongPW;
+    uint    maxLength;
+    uint    minLength;
 
     union {
         uint16_t flags;
@@ -75,7 +86,7 @@ public:
             uint16_t frame                  : 1;
             uint16_t showPassword           : 1;
             uint16_t clipboardEnabled       : 1;
-            uint16_t passwordOk             : 1;
+            uint16_t compareMode            : 1;
         };
     };
 
@@ -85,7 +96,7 @@ public:
     int     rightTextMargin;
     int     bottomTextMargin;
     QChar   hideCharacter;
-    QString::NormalizationForm  normalizationForm;
+    int     normalization;  // -1 no normalization
 };
 
 QT_END_NAMESPACE

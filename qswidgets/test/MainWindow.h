@@ -13,6 +13,10 @@ public:
 
 public Q_SLOTS:
     void passwordEntered();
+    void passwordEntered_type();
+    void passwordEntered_retype();
+    void passwordTooShort();
+    void passwordTooLong();
 
 private:
     Ui::MainWindow  ui;

@@ -18,43 +18,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <QString>
-#include <QByteArray>
-#include <string>
+#include "secureclear.h"
+
 #include <iostream>
 #include <vector>
 
-using utf8string = std::vector<char>; // no data sharing - COW
+using utf8string = std::vector<char>;
 
-template<typename T>
-inline void secureClear( const T& str )
+struct PWstring : public utf8string
 {
-    std::size_t len = std::size_t(str.capacity()) * sizeof(typename T::value_type);
-    volatile char * vpbegin = const_cast<volatile char *>((const char *)str.data());
-//    std::cout
-//        << "\nsecureClear len:" << len
-//        << " typelen:" << sizeof(typename T::value_type)
-//        << " ptr:" << (void *)vpbegin
-//        << std::endl;
-    while( len-- > 0 ) {
-//        std::cout
-//            << " " << std::hex << uint16_t(*vpbegin);
-        *vpbegin++ = 0;
-    }
-//    std::cout << std::endl;
-}
+    PWstring() = delete;
 
-struct PWstr : public utf8string
-{
-    PWstr() = delete;
-
-    inline PWstr(size_t res)
+    inline PWstring(size_t res)
     : utf8string()
     {
         this->reserve(res);
     }
 
-    inline ~PWstr()
+    inline ~PWstring()
     {
         secureClear(*this);
     }
@@ -103,11 +84,10 @@ struct PWstr : public utf8string
     }
 };
 
-inline std::ostream &operator <<(std::ostream &os, const PWstr &v) {
+inline std::ostream &operator << ( std::ostream &os, const PWstring &v ) {
     for( auto c : v ) {
         os << c;
     }
    return os;
 }
 
-bool clipboardPaste( PWstr& text );

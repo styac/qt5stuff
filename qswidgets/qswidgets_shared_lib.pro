@@ -2,7 +2,7 @@
 
 QT += core gui widgets
 
-TARGET = qswidgets_shared_lib
+TARGET = qswidgets
 TEMPLATE = lib
 
 CONF = release

@@ -19,22 +19,20 @@
 
 #include "QsPasswordInput_p.h"
 #include "QsPasswordInput.h"
-#include "utils.h"
+
+#include <QClipboard>
+#include <QApplication>
 
 #include <qpainter.h>
-#include "qapplication.h"
-#include "qdrawutil.h"
-#include "qevent.h"
-#include "qfontmetrics.h"
-#include "qstylehints.h"
-#include "qpainter.h"
-#include "qstyle.h"
-#include "qstyleoption.h"
-#include "qvector.h"
-#include "qdebug.h"
-//#include "private/qstylesheetstyle_p.h"
+#include <qdrawutil.h>
+#include <qevent.h>
+#include <qfontmetrics.h>
+#include <qstylehints.h>
+#include <qpainter.h>
+#include <qstyle.h>
+#include <qstyleoption.h>
+#include <qdebug.h>
 
-#include <limits.h>
 #include <iostream>
 
 QT_BEGIN_NAMESPACE
@@ -43,24 +41,32 @@ QT_BEGIN_NAMESPACE
 // QsPasswordInputPrivate
 // -----------------------------------------------------------------------------------
 
-// TODO: put to QsPasswordInput
-void QsPasswordInputPrivate::init()
-{
-    Q_Q(QsPasswordInput);
-    q->setFocusPolicy(Qt::StrongFocus);
-    q->setAttribute(Qt::WA_InputMethodEnabled);
-    q->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed, QSizePolicy::LineEdit));
-    q->setBackgroundRole(QPalette::Base);
-    q->setAttribute(Qt::WA_KeyCompression);
-    q->setMouseTracking(true);
-    q->setCursor(Qt::IBeamCursor);
-    q->setAttribute(Qt::WA_MacShowFocusRect);
-}
-
-
 void QsPasswordInputPrivate::processInputMethodEvent( QInputMethodEvent *e )
 {
     std::cout << "*** inputMethodEvent  not implemented" << std::endl;
+}
+
+//
+// WARNING: Clipboard history (Klipper, etc) IS NOT CLEARED
+//
+bool QsPasswordInputPrivate::clipboardPaste()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    const QString& str = clipboard->text();
+    if( str.length() == 0 ) {
+        return false;
+    }
+    {
+        // TODO: check normalize !!! - check password managers
+        const QByteArray utf8val = str.toUtf8(); // will be shared
+        password.clear();
+        password.insert(std::begin(password), std::begin(utf8val), std::end(utf8val));
+        secureClear( utf8val );
+    }
+    // clear clipboard
+    secureClear(str);
+    clipboard->clear();
+    return true;
 }
 
 // -----------------------------------------------------------------------------------
@@ -70,6 +76,15 @@ void QsPasswordInputPrivate::processInputMethodEvent( QInputMethodEvent *e )
 QsPasswordInput::QsPasswordInput( QWidget *parent )
 : QWidget( *new QsPasswordInputPrivate, parent, 0 )
 {
+    p_init();
+}
+
+QsPasswordInput::~QsPasswordInput()
+{}
+
+void QsPasswordInput::p_init()
+{
+    Q_D(QsPasswordInput);
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_InputMethodEnabled);
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed, QSizePolicy::LineEdit));
@@ -78,16 +93,113 @@ QsPasswordInput::QsPasswordInput( QWidget *parent )
     setMouseTracking(true);
     setCursor(Qt::IBeamCursor);
     setAttribute(Qt::WA_MacShowFocusRect);
+    d->colorCurrentPW = palette().text().color();
 }
 
-QsPasswordInput::~QsPasswordInput()
-{}
+void QsPasswordInput::p_comparePasswords()
+{
+    Q_D(QsPasswordInput);
+    if( d->passwordCompare->size() < d->password.size() ) {
+        d->colorCurrentPW = d->colorWrongPW;
+    } else {
+        if( std::equal( d->password.begin(), d->password.end(), d->passwordCompare->begin()) ) {
+            if(d->passwordCompare->size() == d->password.size()) {
+                d->colorCurrentPW = d->colorCorrectPW;
+            }
+        } else {
+            d->colorCurrentPW = d->colorWrongPW;
+        }
+    }
+    update();
+}
+
+void QsPasswordInput::setColorCorrectPW( const QColor& val )
+{
+    Q_D( QsPasswordInput );
+    d->colorCorrectPW = val;
+}
+
+QColor QsPasswordInput::colorCorrectPW() const
+{
+    Q_D( const QsPasswordInput );
+    return d->colorCorrectPW;
+}
+
+void QsPasswordInput::setColorWrongPW( const QColor& val )
+{
+    Q_D( QsPasswordInput );
+    d->colorWrongPW = val;
+}
+
+QColor QsPasswordInput::colorWrongPW() const
+{
+    Q_D( const QsPasswordInput );
+    return d->colorWrongPW;
+}
+
+void QsPasswordInput::resetColors()
+{
+    Q_D( QsPasswordInput );
+    d->colorCurrentPW   = palette().text().color();
+    d->colorWrongPW     = d->colorCurrentPW;
+    d->colorCorrectPW   = d->colorCurrentPW;
+}
+
+void QsPasswordInput::p_textChanged()
+{
+    Q_D(QsPasswordInput);
+    d->colorCurrentPW = palette().text().color();
+    emit textChanged();
+}
+
+void QsPasswordInput::setPasswordOk( bool val )
+{
+    Q_D(QsPasswordInput);
+    if( val ) {
+        d->colorCurrentPW = d->colorCorrectPW;
+    } else {
+        d->colorCurrentPW = d->colorWrongPW;
+    }
+    update();
+}
+
+bool QsPasswordInput::setComparePassword( QsPasswordInput const& pw )
+{
+    Q_D(QsPasswordInput);
+    size_t len = pw.textLength();
+    if( len == 0 ) {
+        return false;
+    }
+
+    if( d->passwordCompare != nullptr ) {
+        if( size_t(d->passwordCompare->capacity()) < len ) {
+            delete d->passwordCompare;
+            d->passwordCompare = new PWstring(len*4);
+        }
+    } else {
+        d->passwordCompare = new PWstring(len*4);
+    }
+
+    pw.text( * d->passwordCompare );
+    d->compareMode = true;
+    return true;
+}
+
+void QsPasswordInput::clearComparePassword()
+{
+    Q_D(QsPasswordInput);
+    if( d->passwordCompare != nullptr ) {
+        delete d->passwordCompare;
+        d->passwordCompare = nullptr;
+    }
+    d->compareMode = false;
+}
 
 void QsPasswordInput::initStyleOption(QStyleOptionFrame *option) const
 {
     if (!option)
         return;
-    Q_D(const QsPasswordInput);
+    Q_D( const QsPasswordInput);
     option->initFrom(this);
     option->rect = contentsRect();
     option->lineWidth = d->frame ? style()->pixelMetric(QStyle::PM_DefaultFrameWidth, option, this) : 0;
@@ -97,79 +209,107 @@ void QsPasswordInput::initStyleOption(QStyleOptionFrame *option) const
     option->frameShape = QFrame::Box;
 }
 
+void QsPasswordInput::p_deleteContent()
+{
+    Q_D(QsPasswordInput);
+    d->password.shred();
+    d->showPassword = false;
+    update();
+}
+
 void  QsPasswordInput::text( std::string& password, bool deleteContent )
 {
     Q_D(QsPasswordInput);
-    password.assign( d->password.data(), d->password.size() );
+    password.assign( d->password.begin(), d->password.end() );
     if( deleteContent ) {
-        d->password.shred();
+        p_deleteContent();
     }
+}
+
+void  QsPasswordInput::text( PWstring& password, bool deleteContent )
+{
+    Q_D(QsPasswordInput);
+    password.assign( d->password.begin(), d->password.end() );
+    if( deleteContent ) {
+        p_deleteContent();
+    }
+}
+
+void  QsPasswordInput::text( std::string& password ) const
+{
+    Q_D( const QsPasswordInput);
+    password.assign( d->password.begin(), d->password.end() );
+}
+
+void  QsPasswordInput::text( PWstring& password ) const
+{
+    Q_D( const QsPasswordInput);
+    password.assign( d->password.begin(), d->password.end() );
 }
 
 void  QsPasswordInput::shred()
 {
     Q_D(QsPasswordInput);
-    d->password.shred();
+    p_deleteContent();
 }
 
+// may not be needed or same as shred
 void  QsPasswordInput::clear()
 {
     Q_D(QsPasswordInput);
     d->password.clear();
 }
 
-int QsPasswordInput::minLength() const
+unsigned int QsPasswordInput::minLength() const
 {
     Q_D(const QsPasswordInput);
     return d->minLength;
 }
 
-void QsPasswordInput::setMinLength(int val)
+void QsPasswordInput::setMinLength(uint val)
 {
     Q_D(QsPasswordInput);
-    d->minLength = val;
+    if( val <= d->maxLength ) {
+        d->minLength = val;
+    }
 }
 
-int QsPasswordInput::maxLength() const
+unsigned int QsPasswordInput::maxLength() const
 {
     Q_D(const QsPasswordInput);
     return d->maxLength;
 }
 
-void QsPasswordInput::setMaxLength(int val)
+void QsPasswordInput::setMaxLength( unsigned int val )
 {
     Q_D(QsPasswordInput);
-    d->maxLength = val;
+    if( (val <= maxPasswordLengthLimit) && (val >= d->minLength) ) {
+        d->maxLength = val;
+    }
 }
 
-QString::NormalizationForm QsPasswordInput::normalization() const
+unsigned int QsPasswordInput::textLength() const
 {
     Q_D(const QsPasswordInput);
-    return d->normalizationForm;
+    return d->password.size();
 }
 
-void QsPasswordInput::setNormalization(QString::NormalizationForm val)
+int QsPasswordInput::normalization() const
+{
+    Q_D(const QsPasswordInput);
+    return d->normalization;
+}
+
+void QsPasswordInput::setNormalization( int val )
 {
     Q_D(QsPasswordInput);
-    d->normalizationForm = val;
+    d->normalization = val;
 }
 
-void QsPasswordInput::setClipboardEnabled(bool val)
+void QsPasswordInput::setClipboardEnabled( bool val )
 {
     Q_D(QsPasswordInput);
     d->clipboardEnabled = val;
-}
-
-bool QsPasswordInput::passwordOk() const
-{
-    Q_D(const QsPasswordInput);
-    return d->passwordOk;
-}
-
-void QsPasswordInput::setPasswordOk(bool val)
-{
-    Q_D(QsPasswordInput);
-    d->passwordOk = val;
 }
 
 bool QsPasswordInput::clipboardEnabled() const
@@ -334,7 +474,10 @@ void QsPasswordInput::keyPressEvent(QKeyEvent *e)
         case Qt::Key_X:
             d->password.clear();
             d->showPassword = false;
-            emit textChanged();
+            p_textChanged();
+            if( d->compareMode )  {
+                p_comparePasswords();
+            }
             break;
 
         // show/hide password
@@ -348,9 +491,12 @@ void QsPasswordInput::keyPressEvent(QKeyEvent *e)
                 e->ignore();
                 return;
             }
-            if( clipboardPaste( d->password )) {
+            if( d->clipboardPaste()) {
                 d->showPassword = false;
-                emit textChanged();
+                p_textChanged();
+                if( d->compareMode )  {
+                    p_comparePasswords();
+                }
             }
             break;
 
@@ -366,7 +512,10 @@ void QsPasswordInput::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Backspace:
             if( d->password.size() > 0 ) {
                 d->password.trimLastUtf8();
-                emit textChanged();
+                p_textChanged();
+                if( d->compareMode )  {
+                    p_comparePasswords();
+                }
             }
             if( d->password.size() == 0 ) {
                 d->showPassword = false;
@@ -376,7 +525,13 @@ void QsPasswordInput::keyPressEvent(QKeyEvent *e)
         // ready
         case Qt::Key_Enter:
         case Qt::Key_Return:
-            d->showPassword = false;
+            if( d->password.charCount() < d->minLength ) {
+                emit passwordTooShort();
+                d->colorCurrentPW = d->colorWrongPW;
+            } else if( d->password.charCount() > d->maxLength ) {
+                emit passwordTooLong();
+                d->colorCurrentPW = d->colorWrongPW;
+            }
             emit returnPressed();
             break;
 
@@ -388,20 +543,25 @@ void QsPasswordInput::keyPressEvent(QKeyEvent *e)
                 return;
             }
             {
-                // may not be neccessary if composition not enabled
-                const QString normalized( str.normalized( d->normalizationForm, QChar::Unicode_8_0 ));  // will be shared
+                // 0,1,2,3 are legal
+                bool noNorm = ((d->normalization) < 0) || ((d->normalization) > 3) ;
+                const QString normalized( noNorm ? str : str.normalized( QString::NormalizationForm(d->normalization), QChar::Unicode_8_0 ));  // will be shared
                 const QByteArray utf8val( normalized.toUtf8() );  // will be shared
                 utf8string::size_type utf8len = utf8val.size();
                 utf8string::size_type pwLen = d->password.size();
-                // TODO: refine length check -- character count check : too long, too short
-                if( d->maxLength >= (utf8len+pwLen) ) {
+                // absolute limit
+                if( d->defaultPasswordBufferLength > (utf8len+pwLen) ) {
                     d->password.insert(std::end(d->password), std::begin(utf8val), std::end(utf8val));
                 } else {
                     emit passwordTooLong();
-                }                
+                    d->colorCurrentPW = d->colorWrongPW;
+                }
+                p_textChanged();
+                if( d->compareMode )  {
+                    p_comparePasswords();
+                }
                 secureClear(utf8val);
                 secureClear(normalized);
-                emit textChanged();
             }
             secureClear(str);
         }
@@ -458,6 +618,9 @@ void QsPasswordInput::paintEvent(QPaintEvent *e)
 
     QPainter p(this);
     QPalette pal = palette();
+    if( pal.text().color() != d->colorCurrentPW ) {
+        pal.setColor( QPalette::Text, d->colorCurrentPW );
+    }
     QStyleOptionFrame panel;
     initStyleOption(&panel);
 
@@ -465,7 +628,7 @@ void QsPasswordInput::paintEvent(QPaintEvent *e)
     QRect textRect = style()->subElementRect( QStyle::SE_LineEditContents, &panel, this );
     textRect.adjust( d->leftTextMargin, d->topTextMargin, -d->rightTextMargin, -d->bottomTextMargin );
 
-// cannot link
+// cannot link - not exported
 //    if (QStyleSheetStyle* cssStyle = qobject_cast<QStyleSheetStyle*>(style())) {
 //        cssStyle->styleSheetPalette(this, &panel, &pal);
 //    }

@@ -38,14 +38,14 @@ INCLUDEPATH += \
     qspasswordinput/include
 
 SOURCES += \
-    qspasswordinput/src/QsPasswordInput.cpp \
-    qspasswordinput/src/utils.cpp
+    qspasswordinput/src/QsPasswordInput.cpp
 
 HEADERS += \
     qspasswordinput/private/QsPasswordInput_p.h \
     qspasswordinput/include/QsPasswordInput.h \
     qspasswordinput/include/QsGlobal.h \
-    qspasswordinput/include/utils.h
+    qspasswordinput/include/secureclear.h \
+    qspasswordinput/include/pwstring.h
 
 
 
